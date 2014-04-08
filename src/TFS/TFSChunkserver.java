@@ -1,6 +1,6 @@
 package TFS;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 public class TFSChunkserver 
@@ -17,10 +17,12 @@ public class TFSChunkserver
 		//if not os.access didn't have time to finish : )
 	}
 	
-	public void write (int chunkuuid, File chunk)
+	public void write (int chunkuuid, File chunk) throws FileNotFoundException, UnsupportedEncodingException
 	{
 		String fileName = null;
-		File f = open (fileName, "read");
+		PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+		writer.println(chunk);
+		writer.close();
 	}
 	
 	private File open(String fileName, String string) {
