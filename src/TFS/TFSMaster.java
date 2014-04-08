@@ -19,7 +19,7 @@ public class TFSMaster {
         chunks = new HashMap<ArrayList<Integer>, Integer>();
 
         for(int i = 0; i < this.numChunks; i++){
-            TFSChunkserver cs = new TFSChunkserver(i);
+            TFSChunkserver cs = new TFSChunkserver(""+i);
             servers.put(i, cs);
         }
     }
@@ -65,7 +65,7 @@ public class TFSMaster {
         return files.containsKey(filename);
     }
 
-    protected delete(String filename){
+    protected void delete(String filename){
         List<Integer> uuids = this.files.get(filename);
         this.files.remove(filename);
 

@@ -6,12 +6,20 @@ import java.util.*;
 public class TFSChunkserver 
 {
 	protected String chunkLocation;
-	protected String [] chunkTable;
+	protected ArrayList<String> chunkTable;
 	protected String root;
+	protected String local_filesystem_root;
+	
+	TFSChunkserver(String chunkloc){
+		this.chunkLocation = chunkloc;
+		this.chunkTable = new ArrayList<String>();
+		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
+		//if not os.access didn't have time to finish : )
+	}
 	
 	public void write (int chunkuuid, File chunk)
 	{
-		String fileName;
+		String fileName = null;
 		File f = open (fileName, "read");
 	}
 	

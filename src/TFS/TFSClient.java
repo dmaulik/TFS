@@ -1,5 +1,4 @@
 package TFS;
-import TFSMaster;
 
 public class TFSClient {
 	TFSMaster master;
