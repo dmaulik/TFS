@@ -1,4 +1,4 @@
 TFS
 ===
 
-Tiny Filesystem Project
+Tiny File System Project
