@@ -1,77 +1,101 @@
 package TFS;
 
 import java.util.*;
+import java.io.FileNotFoundException;
+import java.sql.Timestamp;
+import java.util.Date;
 
 public class TFSMaster {
-    private int numChunks = 5;
-    private int MAX_CHUNKS = 10;
-    private int MAX_CHUNKS_PER_FILE = 100;
-    private int chunkSize = 10;
-    private int chunkRobin = 0;
+    private int numOfChunkservers = 3;
+    public int chunkSize = 10;
+    public int chunkRobin = 0;
+    public Sequence counter = new Sequence();
+    
 
-    private Map<Integer, TFSChunkserver> servers;
-    private Map<String, ArrayList<Integer>> files;
-    private Map<ArrayList<Integer>, Integer> chunks;
+    private Map<Integer, TFSChunkserver> chunkserverTable; // Map chunkloc id to chunkserver id
+    private Map<String, List<Integer>> fileTable; // Map filename to chunk ids
+    private Map<Integer, Integer> chunkTable; // Map chunk id to chunkloc id
 
     public TFSMaster() {
-        files = new HashMap<String, ArrayList<Integer>>();
-        servers = new HashMap<Integer, TFSChunkserver>();
-        chunks = new HashMap<ArrayList<Integer>, Integer>();
+        fileTable = new HashMap<String, List<Integer>>();
+        chunkserverTable = new HashMap<Integer, TFSChunkserver>();
+        chunkTable = new HashMap<Integer, Integer>();
 
-        for(int i = 0; i < this.numChunks; i++){
+        for(int i = 0; i < this.numOfChunkservers; i++){
             TFSChunkserver cs = new TFSChunkserver(""+i);
-            servers.put(i, cs);
+            chunkserverTable.put (i, cs);
         }
     }
 
     protected Map getServers(){
-        return this.servers;
+        return this.chunkserverTable;
     }
 
     protected List allocate(String filename, int numChunks){
-        //TODO: finish code
-        List<Integer> uuids = allocateChunks(numChunks);
-
-        return uuids;
+        List<Integer> chunkuuids = allocateChunks(numChunks);
+        fileTable.put (filename, chunkuuids);
+        return chunkuuids;
     }
 
     protected List allocateChunks(int numChunks){
-        List<Integer> uuids = new ArrayList<Integer>();
+        List<Integer> chunkuuids = new ArrayList<Integer>();
         for(int i = 0; i < numChunks; i++){
-            //TODO: finish code
+            int chunkuuid = counter.nextValue();
+            int chunkloc = chunkRobin;
+            chunkTable.put (chunkuuid, chunkloc);
+            chunkuuids.add(chunkuuid);
+            chunkRobin = (chunkRobin +1)%numOfChunkservers;
         }
 
-        return uuids;
+        return chunkuuids;
     }
 
-    protected List appendChunks(String filename, int numChunks){
-        List<Integer> uuid = this.files.get(filename);
-        List<Integer> a_uuids = allocateChunks(numChunks);
+    protected List alloc_append(String filename, int numChunks){
+        List<Integer> uuids = this.fileTable.get(filename);
+        List<Integer> append_uuids = allocateChunks(numChunks);
+        uuids.addAll(append_uuids);
 
-        uuid.addAll(a_uuids);
-
-        return a_uuids;
+        return append_uuids;
     }
 
     protected int getLocation(List<Integer> uuid){
-        return this.chunks.get(uuid);
+        return this.chunkTable.get(uuid);
     }
 
     protected List<Integer> getUUIDS(String filename){
-        return this.files.get(filename);
+        return this.fileTable.get(filename);
     }
 
     protected boolean exists(String filename){
-        return files.containsKey(filename);
+        return fileTable.containsKey(filename);
     }
 
     protected void delete(String filename){
-        List<Integer> uuids = this.files.get(filename);
-        this.files.remove(filename);
+        List<Integer> uuids = this.fileTable.get(filename);
+        this.fileTable.remove(filename);
+        Date date= new java.util.Date();
+   	    Timestamp ts = new Timestamp(date.getTime());
+   	    String deleted_filename = "/hidden/deleted/" + ts + filename;
+   	    fileTable.put(deleted_filename, uuids);
+   	    System.out.println("Deleted file: " + filename + " renamed to " + deleted_filename + " ready for gc ");
 
-        //TODO: finish code
     }
 
-    //TODO: dump metadata method?
+    public void dump_metadata() throws FileNotFoundException{ 	
+    	System.out.println("Filetable: ");
+    	for(Map.Entry entry : fileTable.entrySet()){
+    		System.out.println(entry.getKey().toString() + entry.getValue().toString());	// ?????
+    	}
+    	System.out.println("Chunkservers: " + chunkserverTable.size());
+    	System.out.println("Chunkserver Data: ");
+    	for(Map.Entry entry : chunkTable.entrySet()){
+    		int chunkLoc = (int)(entry.getValue());
+    		int chunkID = (int)(entry.getKey());
+    		String chunk = chunkserverTable.get(chunkLoc).read(chunkID);
+    		System.out.println(" "+ entry.getValue().toString() + entry.getKey().toString() + chunk);
+    	}
+    	
+    }
 	
 }
+
