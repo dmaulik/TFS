@@ -2,6 +2,7 @@ package TFS;
 
 import java.util.*;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -58,7 +59,7 @@ public class TFSMaster {
         return append_uuids;
     }
 
-    protected int getLocation(List<Integer> uuid){
+    protected int getLocation(int uuid){
         return this.chunkTable.get(uuid);
     }
 
@@ -73,7 +74,7 @@ public class TFSMaster {
     protected void delete(String filename){
         List<Integer> uuids = this.fileTable.get(filename);
         this.fileTable.remove(filename);
-        Date date= new java.util.Date();
+        Date date= new Date();
    	    Timestamp ts = new Timestamp(date.getTime());
    	    String deleted_filename = "/hidden/deleted/" + ts + filename;
    	    fileTable.put(deleted_filename, uuids);
@@ -81,7 +82,7 @@ public class TFSMaster {
 
     }
 
-    public void dump_metadata() throws FileNotFoundException{ 	
+    public void dump_metadata() throws IOException{ 	
     	System.out.println("Filetable: ");
     	for(Map.Entry entry : fileTable.entrySet()){
     		System.out.println(entry.getKey().toString() + entry.getValue().toString());	// ?????
@@ -91,8 +92,9 @@ public class TFSMaster {
     	for(Map.Entry entry : chunkTable.entrySet()){
     		int chunkLoc = (int)(entry.getValue());
     		int chunkID = (int)(entry.getKey());
-    		String chunk = chunkserverTable.get(chunkLoc).read(chunkID);
-    		System.out.println(" "+ entry.getValue().toString() + entry.getKey().toString() + chunk);
+    		String ch = chunkserverTable.get(chunkLoc).read(chunkID);
+    		System.out.println(" "+ entry.getValue().toString() + ", " + entry.getKey().toString() +  "," + ch);// prints chunkLoc, chunkID, ch
+    		
     	}
     	
     }

@@ -6,29 +6,29 @@ import java.util.*;
 public class TFSChunkserver 
 {
 	protected String chunkLocation;
-	protected ArrayList<String> chunkTable;
+	protected Map<Integer, String> chunkTable;
 	protected String root;
 	protected String local_filesystem_root;
 	
 	TFSChunkserver(String chunkloc){
 		this.chunkLocation = chunkloc;
-		this.chunkTable = new ArrayList<String>();
+		this.chunkTable = new HashMap<Integer, String>();
+		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
 		//if not os.access didn't have time to finish : )
 	}
 	
-	public void write (int chunkuuid, File chunk) throws FileNotFoundException, UnsupportedEncodingException
+	public void write (int chunkuuid, String chunk) throws IOException
 	{
-		String fileName = null;
-		PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-		writer.println(chunk);
-		writer.close();
+		String local_filename = getFileName(chunkuuid);
+		File file = new File(local_filename);
+		
+		FileWriter fw = new FileWriter(file.getAbsoluteFile());
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(chunk);
+		chunkTable.put(chunkuuid, local_filename);
 	}
-	
-	private File open(String fileName, String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	public String read (int chunkID) throws IOException
 	{
