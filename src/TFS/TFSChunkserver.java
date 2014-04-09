@@ -26,19 +26,25 @@ public class TFSChunkserver
 	}
 	
 	private File open(String fileName, String string) {
-	
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String read (int chunkID)
+	public String read (int chunkID) throws IOException
 	{
 		String data = " ";
+		String localFilename = getFileName(chunkID);
+		String currentLine;
+		BufferedReader br = new BufferedReader(new FileReader(localFilename));
+		while ((currentLine = br.readLine()) != null ){
+			data += currentLine;
+		}
+		br.close();
 		return data;
 	}
 	
 	public String getFileName (int chunkID)
-	{
-		
+	{	
 		return root + "/" + Integer.toString(chunkID) + ".txt";
 	}
 
