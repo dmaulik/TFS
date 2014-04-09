@@ -8,21 +8,36 @@ public class App{
 	public App(){	
 	}
 	
-	/*
-	public void makeDirs(int i, int n){
+	
+	public static void makeDirs(String parentDir, int i, int n){
 		if(i > n)
 			return;
 		else{
-			File d = new File(""+i);
-			makeDirs(i*2, n);
-			makeDirs(i*2 + 1, n);
+			File d;
+			String pD;
+			if(i == 1){
+				pD = ""+i;
+				d = new File(pD);
+			}
+			else{
+				pD = parentDir + "/" + i;
+				d = new File(pD);
+			}
+			if (!d.exists()) {
+			    System.out.println("Creating directory: " + d);
+			    boolean result = d.mkdirs();  
+			}
+			makeDirs(pD+"/", i*2, n);
+			makeDirs(pD+"/", i*2+1, n);
 		}
 	}
-	*/
+	
 	public static void main (String[] args) throws IOException{
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
 		
+		
+		makeDirs("/Users/Elsen/Desktop/",1,7);
 		/*
 		File dir = new File("1/2/4");
 		File dir2 = new File("1/2/5");

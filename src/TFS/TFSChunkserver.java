@@ -36,14 +36,6 @@ public class TFSChunkserver
 	public void createFile (int chunkuuid){
 		String local_filename = getFileName(chunkuuid);
 		File file = new File(local_filename);
-		File theDir = new File(this.local_filesystem_root);
-		if (!theDir.exists()){
-			System.out.println("Creating directory");
-			boolean result = theDir.mkdir();
-			if(result){
-				System.out.println("DIR created");
-			}
-		}
 	}
 	
 	public void write (int chunkuuid, String chunk) throws IOException
