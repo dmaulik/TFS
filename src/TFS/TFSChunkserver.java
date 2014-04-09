@@ -15,6 +15,14 @@ public class TFSChunkserver
 		this.chunkTable = new HashMap<Integer, String>();
 		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
+		File theDir = new File(this.local_filesystem_root);
+		if (!theDir.exists()){
+			System.out.println("Creating directory");
+			boolean result = theDir.mkdir();
+			if(result){
+				System.out.println("DIR created");
+			}
+		}
 		//if not os.access didn't have time to finish : )
 	}
 	
