@@ -26,7 +26,7 @@ public class TFSChunkserver
 	}
 	
 	private File open(String fileName, String string) {
-		// TODO Auto-generated method stub
+	
 		return null;
 	}
 
