@@ -15,6 +15,7 @@ public class TFSChunkserver
 		this.chunkTable = new HashMap<Integer, String>();
 		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
+		createFolder(this.local_filesystem_root);
 	}
 	
 	public void createFolder(String folderName){
