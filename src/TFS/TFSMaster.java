@@ -1,13 +1,14 @@
 package TFS;
 
 import java.util.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
 public class TFSMaster {
-    private int numOfChunkservers = 5;
+    private int numOfChunkservers = 1;
     public int chunkSize = 10;
     public int chunkRobin = 0;
     public Sequence counter = new Sequence();
@@ -16,11 +17,16 @@ public class TFSMaster {
     private Map<Integer, TFSChunkserver> chunkserverTable; // Map chunkloc id to chunkserver id
     private Map<String, List<Integer>> fileTable; // Map filename to chunk ids
     private Map<Integer, Integer> chunkTable; // Map chunk id to chunkloc id
+    
+    private Map<String, Integer> folderTable; // Map foldername to chunkloc id
+    private List<String> folderList;
 
     public TFSMaster() {
         fileTable = new HashMap<String, List<Integer>>();
         chunkserverTable = new HashMap<Integer, TFSChunkserver>();
         chunkTable = new HashMap<Integer, Integer>();
+        folderList = new ArrayList<String>();
+        folderTable = new HashMap<String,Integer>();
 
         for(int i = 0; i < this.numOfChunkservers; i++){
             TFSChunkserver cs = new TFSChunkserver(""+i);
@@ -31,7 +37,13 @@ public class TFSMaster {
     protected Map getServers(){
         return this.chunkserverTable;
     }
-
+    
+    protected void allocateFolder(String folderName){
+    	folderList.add(folderName);
+    	folderTable.put(folderName, chunkRobin);
+    	chunkRobin = (chunkRobin +1)%numOfChunkservers;
+    }
+    
     protected List allocate(String filename, int numChunks){
         List<Integer> chunkuuids = allocateChunks(numChunks);
         fileTable.put (filename, chunkuuids);
@@ -63,12 +75,22 @@ public class TFSMaster {
         return this.chunkTable.get(uuid);
     }
 
+    protected int getFolderLocation(String foldername){
+    	return this.folderTable.get(foldername);
+    }
+    
     protected List<Integer> getUUIDS(String filename){
         return this.fileTable.get(filename);
     }
 
     protected boolean exists(String filename){
         return fileTable.containsKey(filename);
+    }
+    
+    protected boolean folderExists(String foldername){
+    	File dir = new File(foldername);
+    	return dir.exists();
+    	//return folderList.contains(foldername);
     }
 
     protected void delete(String filename){

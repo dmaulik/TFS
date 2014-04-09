@@ -15,7 +15,27 @@ public class TFSChunkserver
 		this.chunkTable = new HashMap<Integer, String>();
 		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
-		//if not os.access didn't have time to finish : )
+	}
+	
+	public void createFolder(String folderName){
+		File dir = new File(folderName);
+
+		// if the directory does not exist, create it
+		if (!dir.exists()) {
+		    System.out.println("Creating directory: " + folderName);
+		    boolean result = dir.mkdir();  
+
+		    if(result) 
+		       System.out.println("Folder created");  
+		}else{
+			System.out.println("Directory already exists");
+		}
+    }
+
+	
+	public void createFile (int chunkuuid){
+		String local_filename = getFileName(chunkuuid);
+		File file = new File(local_filename);
 	}
 	
 	public void write (int chunkuuid, String chunk) throws IOException

@@ -10,8 +10,24 @@ public class TFSClient {
 		this.master = master;
 	}
 	
+	public void createDirectory(String folderName){
+		if(folderExists(folderName)){
+			System.out.println("Error: Directory already exists");
+			return;
+		}
+		master.allocateFolder(folderName);
+		int loc = master.getFolderLocation(folderName);
+		
+		Map<Integer, TFSChunkserver> chunkserverTable = master.getServers();
+		chunkserverTable.get((Integer)(loc)).createFolder(folderName);		
+	}
+	
+	public void deleteDirectory(String folderName){
+		
+	}
+
 	public void write(String filename, String data) throws IOException{
-		if(exists(filename))
+		if(fileExists(filename))
 			delete(filename);
 		
 		int numOfChunks = num_chunks(data.length());
@@ -55,7 +71,7 @@ public class TFSClient {
 	}
 	
 	public void write_append(String filename,String data) throws IOException{
-		if(!exists(filename)){
+		if(!fileExists(filename)){
 			System.out.println("Exception!");
 			return;
 		}
@@ -65,12 +81,16 @@ public class TFSClient {
 		
 	}
 	
-	public boolean exists(String filename){
+	public boolean fileExists(String filename){
 		return master.exists(filename);
 	}
 	
+	public boolean folderExists(String filename){
+		return master.folderExists(filename);
+	}
+	
 	public String read(String filename) throws IOException{
-		if(!exists(filename)){
+		if(!fileExists(filename)){
 			System.out.println("Exception!");
 			return "";
 		}
