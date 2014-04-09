@@ -23,7 +23,6 @@ public class TFSChunkserver
 				System.out.println("DIR created");
 			}
 		}
-		//if not os.access didn't have time to finish : )
 	}
 	
 	public void write (int chunkuuid, String chunk) throws IOException
