@@ -18,11 +18,13 @@ public class App{
 		 System.out.println( "File exists? " + client.exists("src/readme.txt"));
 		 System.out.println( client.read("src/readme.txt"));
 
+		 
 		    //test append, read after append
 		    System.out.println( "\nAppending...");
 		    client.write_append("src/readme.txt", "I'm a little sentence that just snuck in at the end.\n");
 		    System.out.println( client.read("src/readme.txt"));
 
+		    
 		    // test delete
 		    System.out.println( "\nDeleting...");
 		    client.delete("src/readme.txt");
@@ -43,9 +45,11 @@ public class App{
 		        System.out.println( "This exception should be thrown:" +e);
 		    }
 
+		    /*
 		    // show structure of the filesystem
 		    System.out.println( "\nMetadata Dump...");
 		    master.dump_metadata();
+		    */
 	}
 	
 }

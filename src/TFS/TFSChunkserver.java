@@ -27,12 +27,13 @@ public class TFSChunkserver
 		BufferedWriter bw = new BufferedWriter(fw);
 		bw.write(chunk);
 		chunkTable.put(chunkuuid, local_filename);
+		bw.close();
 	}
 
 
 	public String read (int chunkID) throws IOException
 	{
-		String data = " ";
+		String data = "";
 		String localFilename = getFileName(chunkID);
 		String currentLine;
 		BufferedReader br = new BufferedReader(new FileReader(localFilename));

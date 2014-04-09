@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 public class TFSMaster {
-    private int numOfChunkservers = 3;
+    private int numOfChunkservers = 5;
     public int chunkSize = 10;
     public int chunkRobin = 0;
     public Sequence counter = new Sequence();
@@ -74,7 +74,7 @@ public class TFSMaster {
     protected void delete(String filename){
         List<Integer> uuids = this.fileTable.get(filename);
         this.fileTable.remove(filename);
-        Date date= new Date();
+        Date date= new java.util.Date();
    	    Timestamp ts = new Timestamp(date.getTime());
    	    String deleted_filename = "/hidden/deleted/" + ts + filename;
    	    fileTable.put(deleted_filename, uuids);

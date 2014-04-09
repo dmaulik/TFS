@@ -26,7 +26,7 @@ public class TFSClient {
 		int remainingLetters = data.length();
 		for(int i=0; i<data.length(); i+= master.chunkSize){
 			if(remainingLetters<= master.chunkSize){
-				chunks.add(data);
+				chunks.add(data.substring(i,i+remainingLetters));
 				break;
 			}
 			chunks.add(data.substring(i, i+master.chunkSize));
@@ -37,6 +37,7 @@ public class TFSClient {
 		for(int i =0; i<chunkuuids.size(); i++){
 			int chunkuuid = chunkuuids.get(i);
 			int chunkloc = master.getLocation(chunkuuid);
+			//System.out.println(chunks.get(i));
 			chunkserverTable.get((Integer)(chunkloc)).write(chunkuuid, chunks.get(i));
 		}
 		
@@ -47,13 +48,15 @@ public class TFSClient {
 			return 0;
 		else if (size <= master.chunkSize)
 			return 1;
-		else
-			return (int) ((size/master.chunkSize)+0.5);
+		else{
+			return (int)(Math.ceil((float)size/master.chunkSize));
+		}
+
 	}
 	
 	public void write_append(String filename,String data) throws IOException{
 		if(!exists(filename)){
-			System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("Exception!");
 			return;
 		}
 		int num_append_chunks = num_chunks(data.length());
@@ -68,7 +71,7 @@ public class TFSClient {
 	
 	public String read(String filename) throws IOException{
 		if(!exists(filename)){
-			System.out.println("ERRORRR!!!!!!");
+			System.out.println("Exception!");
 			return "";
 		}
 		List<String> chunks = new ArrayList<String>();
