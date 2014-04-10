@@ -10,6 +10,16 @@ public class TFSClient {
 		this.master = master;
 	}
 	
+	public void createFile(String fileName) throws IOException{
+		if(fileExists(fileName)){
+			System.out.println("Error: Files already exists");
+			return;
+		}
+		int numOfChunks = 1;
+		List<Integer> chunkuuids = master.allocate(fileName, numOfChunks);
+		write_chunks(chunkuuids," ");
+	}
+	
 	public void createDirectory(String folderName){
 		if(folderExists(folderName)){
 			System.out.println("Error: Directory already exists");
