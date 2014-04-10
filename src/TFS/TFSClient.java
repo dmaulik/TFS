@@ -21,7 +21,7 @@ public class TFSClient {
 		write_chunks(chunkuuids, b.getBytes());
 	}
 	
-	public void createDirectory(String folderName){
+	public void createDirectory(String folderName) throws IOException{
 		if(folderExists(folderName)){
 			System.out.println("Error: Directory already exists");
 			return;

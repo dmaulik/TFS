@@ -38,6 +38,7 @@ public class TFSMaster {
             chunkserverTable.put (i, cs);
         }
         
+        //Populate files
         String line = "";
         BufferedReader br = new BufferedReader(new FileReader("config.csv"));
         line = br.readLine();
@@ -51,16 +52,34 @@ public class TFSMaster {
       	
         }
         br.close();
+        
+        //Populate folders
+        line = "";
+        br = new BufferedReader(new FileReader("dirconfig.csv"));
+        while((line = br.readLine()) != null){
+        	String[] filenames = line.split(",");
+        	folderList.add(filenames[0]);
+        	folderTable.put(filenames[0], Integer.parseInt(filenames[1]));
+        }
+        br.close();
     }
 
     protected Map getServers(){
         return this.chunkserverTable;
     }
     
-    protected void allocateFolder(String folderName){
-    	folderList.add(folderName);
-    	folderTable.put(folderName, chunkRobin);
+    protected void allocateFolder(String folderName) throws IOException{
+    	int chunkloc = chunkRobin;
     	chunkRobin = (chunkRobin +1)%numOfChunkservers;
+    	folderList.add(folderName);    	
+    	folderTable.put(folderName, chunkloc);
+    	
+    	FileWriter fw = new FileWriter("dirconfig.csv", true);
+       
+        String s = folderName + "," + chunkloc + "\r\n";
+        fw.append(s);
+        fw.flush();
+        fw.close();
     }
    
     
@@ -124,13 +143,35 @@ public class TFSMaster {
     	//return folderList.contains(foldername);
     }
     protected void deleteDirectory(String folderName) throws IOException{
+    	System.out.println("Size:"+ folderList.size());
+    	List<String>arr = new ArrayList<String>();
     	for(int i = 0; i < folderList.size(); i++){
     		String name = folderList.get(i);
-    		if(folderName.equals(name.substring(0, folderName.length()))){
-    			folderList.remove(i);
-    			folderTable.remove(name);
+    		if(folderName.length() <= name.length()){
+    			//System.out.println("Foldername: " + folderName);
+        		//System.out.println("Ss: " + name.substring(0, folderName.length()));
+        		if(folderName.equals(name.substring(0, folderName.length()))){
+        			arr.add(name);
+        		}
     		}
     	}
+    	for (int i = 0; i < arr.size(); i++){
+    		System.out.println("Deleting: " + arr.get(i));
+    		folderList.remove(arr.get(i));
+    		folderTable.remove(arr.get(i));
+    	}
+    	File f = new File("dirconfig.csv");
+        f.delete();
+        f.createNewFile();
+        
+        FileWriter fw = new FileWriter(f);
+        for(int i =0; i< folderList.size(); i++){
+        	String s = folderList.get(i) + "," + folderTable.get(folderList.get(i)) + "\r\n";
+        	fw.append(s);
+            fw.flush();
+        }
+        fw.close();
+        
     	List<String>temp = new ArrayList<String>();
     	for(Map.Entry<String, List<Integer>> e : fileTable.entrySet()){
     		if(folderName.equals(e.getKey().substring(0, folderName.length()))){

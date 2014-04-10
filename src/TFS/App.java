@@ -5,10 +5,6 @@ import java.util.*;
 
 public class App{
 	
-	public App(){	
-	}
-	
-	
 	public static void makeDirs(String parentDir, int i, int n){
 		if(i > n)
 			return;

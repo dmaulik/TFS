@@ -5,8 +5,8 @@ import java.io.*;
 
 public class Test3 {
 	
+	/*
 	public static void delete(File f, TFSClient client) throws IOException{
-		//System.out.println(f.toString());
 		if(f.isDirectory()){
 			String []s = f.list();
 			if(s!=null){
@@ -21,10 +21,9 @@ public class Test3 {
 		} 
 		else 
 			client.delete(f.toString());
-	}
+	}*/
 	
 	public static void main(String[] args) throws IOException{
-		// TODO Auto-generated method stub
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
 		String pathName = "1\\2";

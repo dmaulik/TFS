@@ -4,17 +4,13 @@ import java.io.*;
 import java.util.*;
 
 public class Test1{
-	
-	public Test1(){	
-	}
-	
-	
-	public static void makeDirs(TFSClient client, String parentDir, int i, int n){
+
+	public static void makeDirs(TFSClient client, String parentDir, int i, int n) throws IOException{
 		if(i > n)
 			return;
 		else{
-			File d;
 			String pD;
+			File d;
 			if(i == 1){
 				pD = ""+i;
 				d = new File(pD);
@@ -23,10 +19,10 @@ public class Test1{
 				pD = parentDir + "\\" + i;
 				d = new File(pD);
 			}
-			client.createDirectory(pD);;  
+			client.createDirectory(d.toString());
 			
-			makeDirs(client, pD+"\\", i*2, n);
-			makeDirs(client, pD+"\\", i*2+1, n);
+			makeDirs(client, pD + "\\", i*2, n);
+			makeDirs(client, pD + "\\", i*2+1, n);
 		}
 	}
 	
@@ -35,11 +31,10 @@ public class Test1{
 	}
 	
 	public static void main (String[] args) throws IOException{
-		// TODO Auto-generated method stub
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
-		
-		makeDirs(client, "",1,7);
+		String pathName = "";
+		makeDirs(client, pathName ,1,7);
 		    
 	}
 	

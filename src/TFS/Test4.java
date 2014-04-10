@@ -16,7 +16,6 @@ public class Test4 {
 	} 
 	
 	public static void main (String[] args) throws IOException{
-		// TODO Auto-generated method stub
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
 		storeLocalFile(client, "src/test.txt", "1\\2\\5\\File5.txt");
