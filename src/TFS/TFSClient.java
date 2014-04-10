@@ -17,7 +17,8 @@ public class TFSClient {
 		}
 		int numOfChunks = 1;
 		List<Integer> chunkuuids = master.allocate(fileName, numOfChunks);
-		write_chunks(chunkuuids," ");
+		String b = " ";
+		write_chunks(chunkuuids, b.getBytes());
 	}
 	
 	public void createDirectory(String folderName){
@@ -36,26 +37,28 @@ public class TFSClient {
 		
 	}
 
-	public void write(String filename, String data) throws IOException{
+	public void write(String filename, byte[] data) throws IOException{
 		if(fileExists(filename))
 			delete(filename);
 		
-		int numOfChunks = num_chunks(data.length());
+		int numOfChunks = num_chunks(data.length);
 		List<Integer> chunkuuids = master.allocate(filename, numOfChunks);
 		write_chunks(chunkuuids,data);
 	}
 	
 	
-	public void write_chunks(List<Integer> chunkuuids, String data) throws IOException{
-		List<String> chunks = new ArrayList<String>();
+	public void write_chunks(List<Integer> chunkuuids, byte[] data) throws IOException{
+		List<byte[]> chunks = new ArrayList<byte[]>();
 		//System.out.println(data.length());
-		int remainingLetters = data.length();
-		for(int i=0; i<data.length(); i+= master.chunkSize){
+		int remainingLetters = data.length;
+		for(int i=0; i<data.length; i+= master.chunkSize){
 			if(remainingLetters<= master.chunkSize){
-				chunks.add(data.substring(i,i+remainingLetters));
+				chunks.add(Arrays.copyOfRange(data, i, i + remainingLetters));
+				//chunks.add(data.substring(i,i+remainingLetters));
 				break;
 			}
-			chunks.add(data.substring(i, i+master.chunkSize));
+			chunks.add(Arrays.copyOfRange(data, i, i + master.chunkSize));
+			//chunks.add(data.substring(i, i+master.chunkSize));
 			remainingLetters -= master.chunkSize;
 		}
 				
@@ -80,12 +83,12 @@ public class TFSClient {
 
 	}
 	
-	public void write_append(String filename,String data) throws IOException{
+	public void write_append(String filename,byte[] data) throws IOException{
 		if(!fileExists(filename)){
 			System.out.println("Exception!");
 			return;
 		}
-		int num_append_chunks = num_chunks(data.length());
+		int num_append_chunks = num_chunks(data.length);
 		List<Integer> append_chunkuuids = master.alloc_append(filename, num_append_chunks);
 		write_chunks(append_chunkuuids, data);
 		

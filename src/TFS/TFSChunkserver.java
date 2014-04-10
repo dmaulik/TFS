@@ -6,13 +6,13 @@ import java.util.*;
 public class TFSChunkserver 
 {
 	protected String chunkLocation;
-	protected Map<Integer, String> chunkTable;
+	protected Map<Integer, byte[]> chunkTable; //chunkID to fileName
 	protected String root;
 	protected String local_filesystem_root;
 	
 	TFSChunkserver(String chunkloc){
 		this.chunkLocation = chunkloc;
-		this.chunkTable = new HashMap<Integer, String>();
+		this.chunkTable = new HashMap<Integer, byte[]>();
 		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
 		//createFolder(this.local_filesystem_root);
@@ -39,16 +39,17 @@ public class TFSChunkserver
 		File file = new File(local_filename);
 	}
 	
-	public void write (int chunkuuid, String chunk) throws IOException
+	public void write (int chunkuuid, byte[] chunk) throws IOException
 	{
 		String local_filename = getFileName(chunkuuid);
 		File file = new File(local_filename);
 		
-		FileWriter fw = new FileWriter(file.getAbsoluteFile());
-		BufferedWriter bw = new BufferedWriter(fw);
-		bw.write(chunk);
-		chunkTable.put(chunkuuid, local_filename);
-		bw.close();
+		//FileWriter fw = new FileWriter(file.getAbsoluteFile());
+		FileOutputStream fos = new FileOutputStream(file);
+		//bw.write(chunk);
+		fos.write(chunk);
+		chunkTable.put(chunkuuid, local_filename.getBytes());
+		fos.close();
 	}
 
 
@@ -56,12 +57,13 @@ public class TFSChunkserver
 	{
 		String data = "";
 		String localFilename = getFileName(chunkID);
-		String currentLine;
-		BufferedReader br = new BufferedReader(new FileReader(localFilename));
-		while ((currentLine = br.readLine()) != null ){
+		int currentLine;
+		FileInputStream fis = new FileInputStream(new File(localFilename));
+		//BufferedReader br = new BufferedReader(new FileReader(localFilename));
+		while ((currentLine = fis.read()) != -1 ){
 			data += currentLine;
 		}
-		br.close();
+		fis.close();
 		return data;
 	}
 	
