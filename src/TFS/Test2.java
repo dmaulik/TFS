@@ -10,10 +10,16 @@ public class Test2 {
 	}
 	
 	public static void createFiles(TFSMaster master, TFSClient client, String pathName, int n) throws IOException{
+		if(!client.folderExists(pathName)){
+			System.out.println("Folder doesn't exist");
+			System.exit(0);
+		}
+		
 		for(int i =1; i < n+1; i++){
 			File a = new File(pathName + "\\" + "File" + i);
-			//System.out.println(a.toString());
+			//System.out.println(a.toString())
 			client.createFile(pathName + "\\" + "File" + i);
+			
 		}
 		
 		//File dir = new File(pathName);
