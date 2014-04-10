@@ -3,6 +3,9 @@ TFS
 
 Tiny File System Project
 
+Programming language : java
+Run with Eclipse IDE
+
 We basically created individual files for respective test cases such as Test1.java, Test2.java, Test3.java, Test4.java, Test5.java, Test6.java and Test7.java so that the tests can be run individually. We also have App.java, Sequence.java, TFSChunkserver.java, TFSMaster.java and TFSClient.java. 
 
 **Purpose of Test1.java :
