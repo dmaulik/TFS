@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -49,6 +50,7 @@ public class TFSMaster {
         	fileTable.put(filenames[0], IDs);
       	
         }
+        br.close();
     }
 
     protected Map getServers(){
@@ -121,16 +123,50 @@ public class TFSMaster {
     	return dir.exists();
     	//return folderList.contains(foldername);
     }
-
-    protected void delete(String filename){
+    protected void deleteDirectory(String folderName) throws IOException{
+    	for(int i = 0; i < folderList.size(); i++){
+    		String name = folderList.get(i);
+    		if(folderName.equals(name.substring(0, folderName.length()))){
+    			folderList.remove(i);
+    			folderTable.remove(name);
+    		}
+    	}
+    	List<String>temp = new ArrayList<String>();
+    	for(Map.Entry<String, List<Integer>> e : fileTable.entrySet()){
+    		if(folderName.equals(e.getKey().substring(0, folderName.length()))){
+    			temp.add(e.getKey());
+    		}
+    	}
+    	
+    	for(int i=0; i< temp.size(); i++){
+    		System.out.println("Deleting: " + temp.get(i));
+    		delete(temp.get(i));
+    	}
+    }
+    
+    protected void delete(String filename) throws IOException{
         List<Integer> uuids = this.fileTable.get(filename);
         this.fileTable.remove(filename);
-        Date date= new java.util.Date();
-   	    Timestamp ts = new Timestamp(date.getTime());
-   	    String deleted_filename = "/hidden/deleted/" + ts + filename;
-   	    fileTable.put(deleted_filename, uuids);
-   	    System.out.println("Deleted file: " + filename + " renamed to " + deleted_filename + " ready for gc ");
-
+        
+        File f = new File("config.csv");
+        f.delete();
+        f.createNewFile();
+        
+        FileWriter fw = new FileWriter(f);
+        for(Map.Entry<String, List<Integer>> e : fileTable.entrySet()){
+        	String s = "\r\n" + e.getKey();
+            for(int i = 0; i < e.getValue().size(); i++){
+            	s += "," + e.getValue().get(i);
+            }
+            fw.append(s);
+            fw.flush();
+        }
+        fw.close();
+        //Date date= new java.util.Date();
+   	    //Timestamp ts = new Timestamp(date.getTime());
+   	    //String deleted_filename = "/hidden/deleted/" + ts + filename;
+   	    //fileTable.put(deleted_filename, uuids);
+   	    //System.out.println("Deleted file: " + filename + " renamed to " + deleted_filename + " ready for gc ");
     }
 
     public void dump_metadata() throws IOException{ 	

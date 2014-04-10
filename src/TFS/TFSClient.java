@@ -33,13 +33,21 @@ public class TFSClient {
 		chunkserverTable.get((Integer)(loc)).createFolder(folderName);		
 	}
 	
-	public void deleteDirectory(String folderName){
-		
+	public void deleteDirectory(String folderName) throws IOException{
+		//Map<Integer, TFSChunkserver> chunkserverTable = master.getServers();
+		if(!folderExists(folderName)){
+			System.out.println("Directory Delete: File does not exist");
+			return;
+		}
+		master.deleteDirectory(folderName);
 	}
 
 	public void write(String filename, byte[] data) throws IOException{
-		if(fileExists(filename))
-			delete(filename);
+		if(!fileExists(filename)){
+			System.out.println("File doesn't already exist");
+			return;
+			//delete(filename);
+		}
 		
 		int numOfChunks = num_chunks(data.length);
 		List<Integer> chunkuuids = master.allocate(filename, numOfChunks);
@@ -122,7 +130,11 @@ public class TFSClient {
 		return data;
 	}
 	
-	public void delete(String filename){
+	public void delete(String filename) throws IOException{
+		if(!fileExists(filename)){
+			System.out.println("Delete Error: File does not exist");
+			return;
+		}
 		master.delete(filename);
 	}
 }
