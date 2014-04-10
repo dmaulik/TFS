@@ -31,9 +31,14 @@ public static void storeTFSFile(TFSClient client, String filename, String lpath)
 		TFSClient client = new TFSClient(master);
 		
 		String filename = "1\\2\\5\\File5";
-		String destination = "src\\test.csv";
+		String destination = "src\\test";
 		String a = "QEQWEQWEQWEQWEQWEQWEWQE";
-		client.write(filename, a.getBytes());
+		
+		System.out.println("Writing to TFS: " +filename);
+		client.write(filename, a.getBytes());	//Writing to TFS
+		
+		System.out.println("Reading from TFS and writing to " + destination); // Writing to Local
 		storeTFSFile(client, filename, destination);
+		
 	}
 }

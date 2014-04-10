@@ -71,11 +71,11 @@ public class TFSChunkserver
 	
 	public String getFileName (int chunkID)
 	{	
-		return root + "\\" + Integer.toString(chunkID) + ".csv";
+		return root + "\\" + Integer.toString(chunkID) + ".tfs";
 	}
 	
 	public void removeChunk(int chunkID){
-		File f = new File(root + "\\" + Integer.toString(chunkID) + ".csv");
+		File f = new File(root + "\\" + Integer.toString(chunkID) + ".tfs");
 		f.delete();
 	}
 
