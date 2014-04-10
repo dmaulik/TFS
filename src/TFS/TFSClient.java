@@ -30,7 +30,7 @@ public class TFSClient {
 		int loc = master.getFolderLocation(folderName);
 		
 		Map<Integer, TFSChunkserver> chunkserverTable = master.getServers();
-		chunkserverTable.get((Integer)(loc)).createFolder(folderName);		
+		//chunkserverTable.get((Integer)(loc)).createFolder(folderName);		
 	}
 	
 	public void deleteDirectory(String folderName) throws IOException{
