@@ -1,8 +1,12 @@
 package TFS;
 
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -21,7 +25,7 @@ public class TFSMaster {
     private Map<String, Integer> folderTable; // Map foldername to chunkloc id
     private List<String> folderList;
 
-    public TFSMaster() {
+    public TFSMaster() throws IOException {
         fileTable = new HashMap<String, List<Integer>>();
         chunkserverTable = new HashMap<Integer, TFSChunkserver>();
         chunkTable = new HashMap<Integer, Integer>();
@@ -31,6 +35,19 @@ public class TFSMaster {
         for(int i = 0; i < this.numOfChunkservers; i++){
             TFSChunkserver cs = new TFSChunkserver(""+i);
             chunkserverTable.put (i, cs);
+        }
+        
+        String line = "";
+        BufferedReader br = new BufferedReader(new FileReader("config.csv"));
+        line = br.readLine();
+        while((line = br.readLine()) != null){
+        	String[] filenames = line.split(",");
+        	List<Integer> IDs = new ArrayList<Integer>();
+        	for(int i= 1; i<filenames.length ; i++){
+        		IDs.add(Integer.parseInt(filenames[i]));
+        	}
+        	fileTable.put(filenames[0], IDs);
+      	
         }
     }
 
@@ -45,26 +62,37 @@ public class TFSMaster {
     }
    
     
-    protected List allocate(String filename, int numChunks){
+    protected List allocate(String filename, int numChunks) throws IOException{
+    	FileWriter fw = new FileWriter("config.csv", true);
         List<Integer> chunkuuids = allocateChunks(numChunks);
         fileTable.put (filename, chunkuuids);
+        
+        String s = "\r\n" + filename;
+        for(int i = 0; i < chunkuuids.size(); i++){
+        	s += "," + chunkuuids.get(i);
+        }
+        fw.append(s);
+        fw.flush();
+        fw.close();
         return chunkuuids;
     }
 
-    protected List allocateChunks(int numChunks){
+    protected List allocateChunks(int numChunks) throws IOException{
         List<Integer> chunkuuids = new ArrayList<Integer>();
+
         for(int i = 0; i < numChunks; i++){
             int chunkuuid = counter.nextValue();
             int chunkloc = chunkRobin;
             chunkTable.put (chunkuuid, chunkloc);
             chunkuuids.add(chunkuuid);
             chunkRobin = (chunkRobin +1)%numOfChunkservers;
+            
         }
 
         return chunkuuids;
     }
 
-    protected List alloc_append(String filename, int numChunks){
+    protected List alloc_append(String filename, int numChunks) throws IOException{
         List<Integer> uuids = this.fileTable.get(filename);
         List<Integer> append_uuids = allocateChunks(numChunks);
         uuids.addAll(append_uuids);

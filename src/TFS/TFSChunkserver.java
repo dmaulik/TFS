@@ -49,6 +49,7 @@ public class TFSChunkserver
 		//bw.write(chunk);
 		fos.write(chunk);
 		chunkTable.put(chunkuuid, local_filename.getBytes());
+		fos.flush();
 		fos.close();
 	}
 
@@ -63,6 +64,7 @@ public class TFSChunkserver
 		while ((currentLine = fis.read()) != -1 ){
 			data += currentLine;
 		}
+		
 		fis.close();
 		return data;
 	}
