@@ -43,11 +43,6 @@ public class TFSClient {
 	}
 
 	public void write(String filename, byte[] data) throws IOException{
-		if(!fileExists(filename)){
-			System.out.println("File doesn't already exist");
-			return;
-			//delete(filename);
-		}
 		
 		int numOfChunks = num_chunks(data.length);
 		List<Integer> chunkuuids = master.allocate(filename, numOfChunks);
@@ -110,22 +105,26 @@ public class TFSClient {
 		return master.folderExists(filename);
 	}
 	
-	public String read(String filename) throws IOException{
+	public byte[] read(String filename) throws IOException{
 		if(!fileExists(filename)){
 			System.out.println("Exception!");
-			return "";
+			return null;
 		}
-		List<String> chunks = new ArrayList<String>();
+		List<byte[]> chunks = new ArrayList<byte[]>();
 		List<Integer> chunkuuids = master.getUUIDS(filename);
 		Map<Integer, TFSChunkserver> chunkserverTable = master.getServers();
-		String data = "";
+		byte[] data;
 		
 		for (int i = 0; i <chunkuuids.size(); i++){
 			int chunkloc = master.getLocation(chunkuuids.get(i));
-			String ch = chunkserverTable.get((Integer)(chunkloc)).read(chunkuuids.get(i));
+			byte[] ch = chunkserverTable.get((Integer)(chunkloc)).read(chunkuuids.get(i));
 			chunks.add(ch);
-			data += ch;
 		}
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+		for(int i=0; i<chunks.size(); i++){
+			outputStream.write(chunks.get(i));
+		}
+		data = outputStream.toByteArray( );
 		
 		return data;
 	}

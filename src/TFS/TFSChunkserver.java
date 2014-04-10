@@ -54,18 +54,18 @@ public class TFSChunkserver
 	}
 
 
-	public String read (int chunkID) throws IOException
+	public byte[] read (int chunkID) throws IOException
 	{
-		String data = "";
+		byte[] data = null;
 		String localFilename = getFileName(chunkID);
-		int currentLine;
-		FileInputStream fis = new FileInputStream(new File(localFilename));
-		//BufferedReader br = new BufferedReader(new FileReader(localFilename));
-		while ((currentLine = fis.read()) != -1 ){
-			data += currentLine;
+		String currentLine;
+		//FileInputStream fis = new FileInputStream(new File(localFilename));
+		BufferedReader br = new BufferedReader(new FileReader(localFilename));
+		while ((currentLine = br.readLine()) != null ){
+			data = currentLine.getBytes();
 		}
 		
-		fis.close();
+		br.close();
 		return data;
 	}
 	

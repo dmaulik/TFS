@@ -210,6 +210,7 @@ public class TFSMaster {
    	    //System.out.println("Deleted file: " + filename + " renamed to " + deleted_filename + " ready for gc ");
     }
 
+    /*
     public void dump_metadata() throws IOException{ 	
     	System.out.println("Filetable: ");
     	for(Map.Entry entry : fileTable.entrySet()){
@@ -225,7 +226,7 @@ public class TFSMaster {
     		
     	}
     	
-    }
+    }*/
 	
 }
 
