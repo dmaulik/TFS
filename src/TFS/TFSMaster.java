@@ -48,8 +48,7 @@ public class TFSMaster {
         	for(int i= 1; i<filenames.length ; i++){
         		IDs.add(Integer.parseInt(filenames[i]));
         	}
-        	fileTable.put(filenames[0], IDs);
-      	
+        	fileTable.put(filenames[0], IDs);      	
         }
         br.close();
         
@@ -60,6 +59,15 @@ public class TFSMaster {
         	String[] filenames = line.split(",");
         	folderList.add(filenames[0]);
         	folderTable.put(filenames[0], Integer.parseInt(filenames[1]));
+        }
+        br.close();
+        
+        //Populate chunkID -> chunkLoc mapping
+        line = "";
+        br = new BufferedReader(new FileReader("chconfig.csv"));
+        while((line = br.readLine()) != null){
+        	String[] filenames = line.split(",");
+        	chunkTable.put(Integer.parseInt(filenames[0]), Integer.parseInt(filenames[1]));
         }
         br.close();
     }
@@ -100,15 +108,20 @@ public class TFSMaster {
 
     protected List allocateChunks(int numChunks) throws IOException{
         List<Integer> chunkuuids = new ArrayList<Integer>();
-
+        FileWriter fw = new FileWriter("chconfig.csv", true);
+        String s = "";
         for(int i = 0; i < numChunks; i++){
             int chunkuuid = counter.nextValue();
             int chunkloc = chunkRobin;
             chunkTable.put (chunkuuid, chunkloc);
             chunkuuids.add(chunkuuid);
             chunkRobin = (chunkRobin +1)%numOfChunkservers;
-            
+            s += chunkuuid + "," + chunkloc + "\r\n";
+            fw.flush();
         }
+        fw.append(s);
+        fw.flush();
+        fw.close();
 
         return chunkuuids;
     }
@@ -189,6 +202,27 @@ public class TFSMaster {
         List<Integer> uuids = this.fileTable.get(filename);
         this.fileTable.remove(filename);
         
+      //remove chconfig log
+        File f0 = new File("chconfig.csv");
+        f0.delete();
+        f0.createNewFile();
+        FileWriter fw0 = new FileWriter("chconfig.csv", true);
+        String s0 = "";
+        for(int i=0 ; i<uuids.size(); i++){
+        	int chunkLoc = chunkTable.get(uuids.get(i));
+        	TFSChunkserver cs = chunkserverTable.get(chunkLoc);
+        	cs.removeChunk(uuids.get(i));
+        	chunkTable.remove(uuids.get(i));
+        }
+        
+        for(Map.Entry<String, List<Integer>> e : fileTable.entrySet()){
+            s0 +=  e.getKey() + "," + e.getValue() + "\r\n";
+            fw0.append(s0);
+            fw0.flush();
+        }
+        fw0.close();
+        
+        //remove config log
         File f = new File("config.csv");
         f.delete();
         f.createNewFile();

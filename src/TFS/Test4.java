@@ -7,7 +7,7 @@ public class Test4 {
 	
 	public static void storeLocalFile(TFSClient client, String lpath, String filename) throws IOException{
 		
-		//TODO Need to check whether file exists or not
+		//TODO Need to check whether physical file (lpath) exists or not
 		//If file(lpath) doesn't exist, give error
 		
 		if(client.fileExists(filename)){
@@ -17,7 +17,6 @@ public class Test4 {
 		
 		File file = new File(lpath);
 		byte[] f = client.fileToByte(file);
-		//System.out.println("It's writing text: "+client.byteToString(f));
 		client.write(filename, f);
 
 	} 

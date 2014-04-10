@@ -71,7 +71,12 @@ public class TFSChunkserver
 	
 	public String getFileName (int chunkID)
 	{	
-		return root + "/" + Integer.toString(chunkID) + ".txt";
+		return root + "\\" + Integer.toString(chunkID) + ".csv";
+	}
+	
+	public void removeChunk(int chunkID){
+		File f = new File(root + "\\" + Integer.toString(chunkID) + ".csv");
+		f.delete();
 	}
 
 }

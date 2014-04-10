@@ -5,7 +5,6 @@ import java.io.*;
 
 public class Test3 {
 	
-	/*
 	public static void delete(File f, TFSClient client) throws IOException{
 		if(f.isDirectory()){
 			String []s = f.list();
@@ -21,7 +20,7 @@ public class Test3 {
 		} 
 		else 
 			client.delete(f.toString());
-	}*/
+	}
 	
 	public static void main(String[] args) throws IOException{
 		TFSMaster master = new TFSMaster();
