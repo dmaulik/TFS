@@ -1,10 +1,10 @@
 package TFS;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class TFSClient {
-	TFSMaster master;
+	static TFSMaster master;
 	
 	TFSClient(TFSMaster master){
 		this.master = master;
@@ -55,7 +55,7 @@ public class TFSClient {
 	}
 	
 	
-	public void write_chunks(List<Integer> chunkuuids, byte[] data) throws IOException{
+	public static void write_chunks(List<Integer> chunkuuids, byte[] data) throws IOException{
 		List<byte[]> chunks = new ArrayList<byte[]>();
 		//System.out.println(data.length());
 		int remainingLetters = data.length;
@@ -80,7 +80,7 @@ public class TFSClient {
 		
 	}
 	
-	public int num_chunks(int size){
+	public static int num_chunks(int size){
 		if(size == 0)
 			return 0;
 		else if (size <= master.chunkSize)
@@ -136,5 +136,39 @@ public class TFSClient {
 			return;
 		}
 		master.delete(filename);
+	}
+		
+	
+	public byte[] fileToByte (File file) throws IOException{
+
+
+	    byte []buffer = new byte[(int) file.length()];
+	    InputStream ios = null;
+	    try {
+	        ios = new FileInputStream(file);
+	        if ( ios.read(buffer) == -1 ) {
+	            throw new IOException("EOF reached while trying to read the whole file");
+	        }        
+	    } finally { 
+	        try {
+	             if ( ios != null ) 
+	                  ios.close();
+	        } catch ( IOException e) {
+	        }
+	    }
+
+	    return buffer;
+	}
+	
+	public String byteToString(byte[] _bytes)
+	{
+	    String file_string = "";
+
+	    for(int i = 0; i < _bytes.length; i++)
+	    {
+	        file_string += (char)_bytes[i];
+	    }
+
+	    return file_string;    
 	}
 }
