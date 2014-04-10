@@ -34,8 +34,8 @@ public class Test4 {
 			}
 		}
 		
-		File file = new File(lpath);
-		byte[] b = client.fileToByte(file);
+		//File file = new File(lpath);
+		byte[] b = client.fileToByte(f);
 		client.write(filename, b);
 
 	} 

@@ -138,6 +138,7 @@ public class TFSClient {
 	}
 		
 	
+	
 	public byte[] fileToByte (File file) throws IOException{
 
 
