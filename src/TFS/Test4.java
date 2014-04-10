@@ -7,17 +7,36 @@ public class Test4 {
 	
 	public static void storeLocalFile(TFSClient client, String lpath, String filename) throws IOException{
 		
-		//TODO Need to check whether physical file (lpath) exists or not
-		//If file(lpath) doesn't exist, give error
+		File f = new File(lpath);
+		if(!f.exists()){
+			System.out.println("Error: Source file does not exist");
+			System.exit(0);
+		}
 		
 		if(client.fileExists(filename)){
 			System.out.println("Error: Destination file already exists");
-			return;
+			System.exit(0);
+		}
+		
+		String []s = filename.split("\\\\");
+		String folderName = "";
+		if(s.length == 1){
+			//create directly. No folder
+		}
+		else{
+			folderName += s[0];
+			for(int i=1; i<s.length-1; i++){
+				folderName += ("\\" + s[i]);
+			}
+			if(!client.folderExists(folderName)){
+				System.out.println("Error: Folder doesn't exist");
+				System.exit(0);
+			}
 		}
 		
 		File file = new File(lpath);
-		byte[] f = client.fileToByte(file);
-		client.write(filename, f);
+		byte[] b = client.fileToByte(file);
+		client.write(filename, b);
 
 	} 
 	
@@ -25,9 +44,9 @@ public class Test4 {
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
 		
-		storeLocalFile(client, "src\\test.txt", "1\\2\\5\\File5.txt");
+		storeLocalFile(client, "src\\test", "1\\2\\5\\File5.txt");
 		String s = new String(client.read("1\\2\\5\\File5.txt"));
-	    System.out.println("Text Decrypted : " + s);
+	    System.out.println("Content : " + s);
 	}
 	
 }

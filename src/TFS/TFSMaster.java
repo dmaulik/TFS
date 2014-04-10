@@ -8,9 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Timestamp;
-import java.util.Date;
 
 public class TFSMaster {
     private int numOfChunkservers = 1;
@@ -68,6 +65,7 @@ public class TFSMaster {
         while((line = br.readLine()) != null){
         	String[] filenames = line.split(",");
         	chunkTable.put(Integer.parseInt(filenames[0]), Integer.parseInt(filenames[1]));
+        	int i = counter.nextValue();	//so that chunkID are still unique
         }
         br.close();
     }
@@ -76,11 +74,25 @@ public class TFSMaster {
         return this.chunkserverTable;
     }
     
+    protected List<String> folderInDirectory(String folderName){
+    	List<String>arr = new ArrayList<String>();
+    	for(int i = 0; i < folderList.size(); i++){
+    		String name = folderList.get(i);
+    		if(folderName.length() < name.length()){
+    			if(folderName.equals(name.substring(0, folderName.length()))){
+        			arr.add(name);
+        		}
+    		}
+    	}
+    	return arr;
+    }
+    
     protected void allocateFolder(String folderName) throws IOException{
     	int serverloc = chunkRobin;
     	chunkRobin = (chunkRobin +1)%numOfChunkservers;
     	folderList.add(folderName);    	
     	folderTable.put(folderName, serverloc);
+    	System.out.println(folderName + " is created");
     	
     	FileWriter fw = new FileWriter("dirconfig.csv", true);
        
@@ -95,6 +107,7 @@ public class TFSMaster {
     	FileWriter fw = new FileWriter("config.csv", true);
         List<Integer> chunkuuids = allocateChunks(numChunks);
         fileTable.put (filename, chunkuuids);
+        System.out.println(filename + " is created");
         
         String s = "\r\n" + filename;
         for(int i = 0; i < chunkuuids.size(); i++){
@@ -151,12 +164,14 @@ public class TFSMaster {
     }
     
     protected boolean folderExists(String foldername){
-    	File dir = new File(foldername);
-    	return dir.exists();
+    	
+    	return folderTable.containsKey(foldername);
+    	//File dir = new File(foldername);
+    	//return dir.exists();
     	//return folderList.contains(foldername);
     }
     protected void deleteDirectory(String folderName) throws IOException{
-    	System.out.println("Size:"+ folderList.size());
+    	//System.out.println("Size:"+ folderList.size());
     	List<String>arr = new ArrayList<String>();
     	for(int i = 0; i < folderList.size(); i++){
     		String name = folderList.get(i);
