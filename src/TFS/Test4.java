@@ -44,7 +44,7 @@ public class Test4 {
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
 		
-		storeLocalFile(client, "src\\test", "1\\2\\5\\File5.txt");
+		storeLocalFile(client, "src\\test.txt", "1\\2\\5\\File5.txt");
 		String s = new String(client.read("1\\2\\5\\File5.txt"));
 	    System.out.println("Content : " + s);
 	}
