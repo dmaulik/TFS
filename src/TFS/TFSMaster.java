@@ -77,14 +77,14 @@ public class TFSMaster {
     }
     
     protected void allocateFolder(String folderName) throws IOException{
-    	int chunkloc = chunkRobin;
+    	int serverloc = chunkRobin;
     	chunkRobin = (chunkRobin +1)%numOfChunkservers;
     	folderList.add(folderName);    	
-    	folderTable.put(folderName, chunkloc);
+    	folderTable.put(folderName, serverloc);
     	
     	FileWriter fw = new FileWriter("dirconfig.csv", true);
        
-        String s = folderName + "," + chunkloc + "\r\n";
+        String s = folderName + "," + serverloc + "\r\n";
         fw.append(s);
         fw.flush();
         fw.close();
