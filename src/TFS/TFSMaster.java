@@ -142,6 +142,42 @@ public class TFSMaster {
         List<Integer> uuids = this.fileTable.get(filename);
         List<Integer> append_uuids = allocateChunks(numChunks);
         uuids.addAll(append_uuids);
+        
+        //Modify the config file
+        /*
+        String line = "";
+        BufferedReader br = new BufferedReader(new FileReader("config.csv"));
+        line = br.readLine();
+        while((line = br.readLine()) != null){
+        	String[] filenames = line.split(",");
+        	if(filenames[0].equals(filename)){
+        		for(int i = 0; i<append_uuids.size(); i++){
+        			line += "," + append_uuids.get(i);  
+        		}
+        	}
+        }
+        br.close();
+        */
+    
+        //FIX Filetable
+        fileTable.remove(filename);
+        fileTable.put(filename, uuids);
+        
+       //Rewrite config.csv
+        File f = new File("config.csv");
+        f.delete();
+        f.createNewFile();
+        
+        FileWriter fw = new FileWriter(f);
+        for(Map.Entry<String, List<Integer>> e : fileTable.entrySet()){
+        	String s = "\r\n" + e.getKey();
+            for(int i = 0; i < e.getValue().size(); i++){
+            	s += "," + e.getValue().get(i);
+            }
+            fw.append(s);
+            fw.flush();
+        }
+        fw.close();
 
         return append_uuids;
     }
