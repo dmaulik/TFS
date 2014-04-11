@@ -159,6 +159,10 @@ public class TFSClient {
 	    return buffer;
 	}
 	
+	public List<Integer> getUUIDS (String filename){
+		return master.getUUIDS(filename);
+	}
+	
 	public String byteToString(byte[] _bytes)
 	{
 	    String file_string = "";
