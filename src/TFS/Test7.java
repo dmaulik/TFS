@@ -27,7 +27,7 @@ public class Test7 {
     	
 		TFSMaster master = new TFSMaster();
 	  	TFSClient client = new TFSClient(master);
-		String filename = "1\\2\\File1";
+		String filename = "1\\File5";
 
 		countFile(client, filename);		
 	}
