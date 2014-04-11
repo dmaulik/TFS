@@ -9,6 +9,7 @@ public class Test7 {
 
     public static void countFile (TFSClient client, String filename) throws IOException {
     	//If the input TFS file does not exist then return an error
+    	int numOfLogicalFiles;
     	if (!client.fileExists(filename))
     	{
     		System.out.println("Error: Input TFS file does not exists");
@@ -16,7 +17,7 @@ public class Test7 {
     	}
     	//count the number of logical files stored in a TFS file
     	//read the size and payload pairs in the specified file name
-    	int numOfLogicalFiles;
+    	
     	else {
     		
     	}

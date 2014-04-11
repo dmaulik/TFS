@@ -141,7 +141,6 @@ public class TFSClient {
 	
 	public byte[] fileToByte (File file) throws IOException{
 
-
 	    byte []buffer = new byte[(int) file.length()];
 	    InputStream ios = null;
 	    try {

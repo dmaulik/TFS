@@ -11,11 +11,10 @@ import java.io.IOException;
 
 public class TFSMaster {
     private int numOfChunkservers = 1;
-    public int chunkSize = 10;
+    public int chunkSize = 64;
     public int chunkRobin = 0;
     public Sequence counter = new Sequence();
     
-
     private Map<Integer, TFSChunkserver> chunkserverTable; // Map chunkloc id to chunkserver id
     private Map<String, List<Integer>> fileTable; // Map filename to chunk ids
     private Map<Integer, Integer> chunkTable; // Map chunk id to chunkloc id
