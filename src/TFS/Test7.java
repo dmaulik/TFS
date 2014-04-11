@@ -48,7 +48,7 @@ public class Test7 {
 		String filename = "1\\File5";
 
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Test7:\nEnter TFS file pathname (i.e. 1\\2\\5\\File5) >> ");
+		System.out.println("Test7:\nEnter TFS file pathname (should be the same as TFS pathname in Test 6) (i.e. 1\\2\\5\\File3) >> ");
 		filename = scan.nextLine();
 		countFile(client, filename);		
 	}
