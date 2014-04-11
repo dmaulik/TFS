@@ -1,6 +1,8 @@
 package TFS;
 
+import java.util.*;
 import java.io.*;
+
 
 public class Test4 {
 	public Test4(){}
@@ -44,8 +46,18 @@ public class Test4 {
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
 		
-		storeLocalFile(client, "src\\test.txt", "1\\2\\5\\File5.txt");
-		String s = new String(client.read("1\\2\\5\\File5.txt"));
+		String localpath = "";
+		String TFSfilePath = "";
+		
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Test4:\nEnter local pathname(i.e. src\\test123.txt) >> ");
+		localpath = scan.nextLine();
+		System.out.println("Enter TFS destination pathname (i.e. 1\\2\\5\\File5) >> ");
+		TFSfilePath = scan.nextLine();
+		
+		storeLocalFile(client, localpath, TFSfilePath);
+		
+		String s = new String(client.read(TFSfilePath));
 	    System.out.println("Content : " + s);
 	}
 	

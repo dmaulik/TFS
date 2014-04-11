@@ -80,8 +80,14 @@ public class Test6 {
 	  	TFSMaster master = new TFSMaster();
 	  	TFSClient client = new TFSClient(master);
 	  	
-	  	//append(client, "src\\test123.txt", "1\\File5");
-	  	append(client,"src\\img.png","1\\File5");
+	  	Scanner scan = new Scanner(System.in);
+		System.out.println("Test6:\nEnter local file pathname  (i.e.src\\test123.txt) >> ");
+		String locfile = scan.nextLine();
+		System.out.println("Enter TFS pathname (i.e. 1\\2\\5\\File5) >> ");
+		String tfspath = scan.nextLine();
+		
+	  	
+	  	append(client,locfile,tfspath);
 	  	String s = new String(client.read("1\\File5"));
 	    System.out.println("Content : " + s);
 	

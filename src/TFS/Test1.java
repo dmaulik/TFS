@@ -34,7 +34,14 @@ public class Test1{
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
 		String pathName = "";
-		makeDirs(client, pathName ,1,7);
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Test1:\nEnter an integer N >> ");
+		int n = 0;
+		n = scan.nextInt();
+		if(n>0)
+			makeDirs(client, pathName, 1,n);
+		else
+			System.out.println("Invalid integer");
 		    
 	}
 	

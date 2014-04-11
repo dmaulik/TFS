@@ -26,6 +26,11 @@ public class Test3 {
 		TFSMaster master = new TFSMaster();
 		TFSClient client = new TFSClient(master);
 		String pathName = "1\\2";
+		
+		
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Test3:\nEnter folder's pathname (i.e. 1\\2\\3) >> ");
+		pathName = scan.nextLine();
 		File f = new File(pathName);
 		client.deleteDirectory(pathName);
 		

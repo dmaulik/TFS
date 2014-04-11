@@ -40,6 +40,11 @@ public class Test2 {
 		String pathName = "1\\2";
 		int n = 5;
 		
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Test2:\nEnter folder's pathname (i.e. 1\\2\\3) >> ");
+		pathName = scan.nextLine();
+		System.out.println("Enter integer n >> ");
+		n = scan.nextInt();
 		createFiles(master, client, pathName, n);
 	
 	}

@@ -39,13 +39,15 @@ public static void storeTFSFile(TFSClient client, String filename, String lpath)
 		TFSClient client = new TFSClient(master);
 		
 		String filename = "1\\2\\5\\File5";
-		//String destination = "1\\2\\test";
 		String destination = "src\\test";
-		String a = "QEQWEQWEQWEQWEQWEQWEWQE";
 		
-		System.out.println("Writing to TFS: " +filename);
-		client.write(filename, a.getBytes());	//Writing to TFS
-		System.out.println("Reading from TFS and writing to " + destination); // Writing to Local
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Test5:\nEnter TFS pathname (i.e. 1\\2\\5\\File5) >> ");
+		filename = scan.nextLine();
+		System.out.println("Enter local destination pathname(i.e. src\\test.txt) >> ");
+		destination = scan.nextLine();
+		
+		System.out.println("Reading from " + filename + " and writing to " + destination); // Writing to Local
 		storeTFSFile(client, filename, destination);
 		
 	}

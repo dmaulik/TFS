@@ -171,6 +171,7 @@ public class TFSClient {
 	    {
 	        file_string += (char)_bytes[i];
 	    }
+	    
 
 	    return file_string;    
 	}
