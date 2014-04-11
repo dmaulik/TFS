@@ -46,9 +46,9 @@ public class Test6 {
 		
 		String nB = new String(newByte);
 		int nB2 = Integer.parseInt(nB);
-		System.out.println("Integer: "+size);
-		System.out.println("String: "+nB);
-		System.out.println("BytesToInt: " + nB2);
+		//System.out.println("Integer: "+size);
+		//System.out.println("String: "+nB);
+		//System.out.println("BytesToInt: " + nB2);
 		
 		
 		//byte[] byteSize=new byte[4];
@@ -67,7 +67,7 @@ public class Test6 {
 		    combined[i] = i < newByte.length ? newByte[i] : b[i - newByte.length];
 		}
 		String z = new String(combined);
-		System.out.println(z);
+		//System.out.println(z);
 		
 		if(!client.fileExists(filename))
 			client.write(filename, combined);
@@ -81,7 +81,7 @@ public class Test6 {
 	  	TFSClient client = new TFSClient(master);
 	  	
 	  	Scanner scan = new Scanner(System.in);
-		System.out.println("Test6:\nEnter local file pathname  (i.e.src\\test123.txt) >> ");
+		System.out.println("Test6:\nEnter local file pathname  (i.e.src\\img.png) >> ");
 		String locfile = scan.nextLine();
 		System.out.println("Enter TFS pathname (i.e. 1\\2\\5\\File5) >> ");
 		String tfspath = scan.nextLine();
@@ -89,8 +89,8 @@ public class Test6 {
 	  	
 	  	append(client,locfile,tfspath);
 	  	//append(client, "src\\test123.txt", "1\\File5");
-	  	append(client,"src\\img2.png","1\\File5");
-	  	String s = new String(client.read("1\\File5"));
+	  	//append(client,"src\\img2.png","1\\File5");
+	  	String s = new String(client.read("1\\2\\5\\File5"));
 	    System.out.println("Content : " + s);
 	
 	}

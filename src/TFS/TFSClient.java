@@ -108,7 +108,7 @@ public class TFSClient {
 	public byte[] read(String filename) throws IOException{
 		if(!fileExists(filename)){
 			System.out.println("Exception!");
-			return null;
+			System.exit(0);;
 		}
 		List<byte[]> chunks = new ArrayList<byte[]>();
 		List<Integer> chunkuuids = master.getUUIDS(filename);

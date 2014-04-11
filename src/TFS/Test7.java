@@ -28,11 +28,11 @@ public class Test7 {
     	
     	String nB = new String(size);
 		int nB2 = Integer.parseInt(nB);
-		System.out.println(nB2);
+		//System.out.println(nB2);
 		int count=0;
 		while(delta<b.length){
 			count++;
-			System.out.println(delta);
+			//System.out.println(delta);
 			size=client.seekByteSize(delta, filename);
 	    	nB = new String(size);
 			nB2 = Integer.parseInt(nB);
@@ -47,6 +47,9 @@ public class Test7 {
 	  	TFSClient client = new TFSClient(master);
 		String filename = "1\\File5";
 
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Test7:\nEnter TFS file pathname (i.e. 1\\2\\5\\File5) >> ");
+		filename = scan.nextLine();
 		countFile(client, filename);		
 	}
   
