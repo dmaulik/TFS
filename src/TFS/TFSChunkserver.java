@@ -53,19 +53,17 @@ public class TFSChunkserver
 		fos.close();
 	}
 
-
 	public byte[] read (int chunkID) throws IOException
 	{
 		byte[] data = null;
 		String localFilename = getFileName(chunkID);
-		String currentLine;
-		//FileInputStream fis = new FileInputStream(new File(localFilename));
-		BufferedReader br = new BufferedReader(new FileReader(localFilename));
-		while ((currentLine = br.readLine()) != null ){
-			data = currentLine.getBytes();
-		}
-		
-		br.close();
+		//String currentLine;
+		//BufferedReader br = new BufferedReader(new FileReader(localFilename));
+		//while ((currentLine = br.readLine()) != null ){
+		//	data = currentLine.getBytes();
+		//}
+		//br.close();
+		data = fileToByte(new File(localFilename));
 		return data;
 	}
 	
@@ -79,4 +77,23 @@ public class TFSChunkserver
 		f.delete();
 	}
 
+	public byte[] fileToByte (File file) throws IOException{
+
+	    byte []buffer = new byte[(int) file.length()];
+	    InputStream ios = null;
+	    try {
+	        ios = new FileInputStream(file);
+	        if ( ios.read(buffer) == -1 ) {
+	            throw new IOException("EOF reached while trying to read the whole file");
+	        }        
+	    } finally { 
+	        try {
+	             if ( ios != null ) 
+	                  ios.close();
+	        } catch ( IOException e) {
+	        }
+	    }
+
+	    return buffer;
+	}
 }

@@ -141,7 +141,6 @@ public class TFSClient {
 	
 	public byte[] fileToByte (File file) throws IOException{
 
-
 	    byte []buffer = new byte[(int) file.length()];
 	    InputStream ios = null;
 	    try {
@@ -158,6 +157,10 @@ public class TFSClient {
 	    }
 
 	    return buffer;
+	}
+	
+	public List<Integer> getUUIDS (String filename){
+		return master.getUUIDS(filename);
 	}
 	
 	public String byteToString(byte[] _bytes)
