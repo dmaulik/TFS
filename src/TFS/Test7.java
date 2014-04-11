@@ -18,9 +18,27 @@ public class Test7 {
     	//read the size and payload pairs in the specified file name
     	
     	List<Integer> ids = client.getUUIDS(filename);
+    	//File f= new File(filename);
     	byte []b = client.read(filename);
+    	//client.fileToByte(f);
     	System.out.println("Size of \"" + filename + "\" is " + ids.size() + " chunk(s)");
     	System.out.println("Size of \"" + filename + "\" is " + b.length + " byte(s)");
+    	int delta=0;
+    	byte[] size=client.seekByteSize(delta, filename);
+    	
+    	String nB = new String(size);
+		int nB2 = Integer.parseInt(nB);
+		System.out.println(nB2);
+		int count=0;
+		while(delta<b.length){
+			count++;
+			System.out.println(delta);
+			size=client.seekByteSize(delta, filename);
+	    	nB = new String(size);
+			nB2 = Integer.parseInt(nB);
+			delta=delta+(4+nB2);
+		}
+		System.out.println("The TFSfile contains "+count+" logical files");
     }
 
     public static void main (String[] args) throws Exception{

@@ -81,7 +81,7 @@ public class Test6 {
 	  	TFSClient client = new TFSClient(master);
 	  	
 	  	//append(client, "src\\test123.txt", "1\\File5");
-	  	append(client,"src\\img.png","1\\File5");
+	  	append(client,"src\\img2.png","1\\File5");
 	  	String s = new String(client.read("1\\File5"));
 	    System.out.println("Content : " + s);
 	

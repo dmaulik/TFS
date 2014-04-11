@@ -158,6 +158,14 @@ public class TFSClient {
 
 	    return buffer;
 	}
+	public byte[] seekByteSize(int offset, String filename) throws IOException{
+		byte[] result=new byte[4];
+		byte[] b = read(filename);
+		for(int i=0;i<4;i++){
+			result[i]=b[offset+i];
+		}
+		return result;
+	}
 	
 	public List<Integer> getUUIDS (String filename){
 		return master.getUUIDS(filename);
