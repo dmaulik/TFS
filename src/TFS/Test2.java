@@ -41,7 +41,7 @@ public class Test2 {
 		int n = 5;
 		
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Test2:\nEnter folder's pathname (i.e. 1\\2\\3) >> ");
+		System.out.println("Test2:\nEnter folder's pathname (i.e. 1\\2) >> ");
 		pathName = scan.nextLine();
 		System.out.println("Enter integer n >> ");
 		n = scan.nextInt();

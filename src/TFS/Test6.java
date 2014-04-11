@@ -83,14 +83,14 @@ public class Test6 {
 	  	Scanner scan = new Scanner(System.in);
 		System.out.println("Test6:\nEnter local file pathname  (i.e.src\\img.png) >> ");
 		String locfile = scan.nextLine();
-		System.out.println("Enter TFS pathname (i.e. 1\\2\\5\\File5) >> ");
+		System.out.println("Enter TFS pathname (should be the same as TFS pathname in Test 6) (i.e. 1\\2\\5\\File5) >> ");
 		String tfspath = scan.nextLine();
 		
 	  	
 	  	append(client,locfile,tfspath);
 	  	//append(client, "src\\test123.txt", "1\\File5");
 	  	//append(client,"src\\img2.png","1\\File5");
-	  	String s = new String(client.read("1\\2\\5\\File5"));
+	  	String s = new String(client.read(tfspath));
 	    System.out.println("Content : " + s);
 	
 	}
