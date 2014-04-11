@@ -17,7 +17,7 @@ public class TFSClient {
 		}
 		int numOfChunks = 1;
 		List<Integer> chunkuuids = master.allocate(fileName, numOfChunks);
-		String b = " ";
+		String b = "";
 		write_chunks(chunkuuids, b.getBytes());
 	}
 	
@@ -45,6 +45,8 @@ public class TFSClient {
 	public void write(String filename, byte[] data) throws IOException{
 		
 		int numOfChunks = num_chunks(data.length);
+		if(numOfChunks == 0)
+			numOfChunks = 1;
 		List<Integer> chunkuuids = master.allocate(filename, numOfChunks);
 		write_chunks(chunkuuids,data);
 	}
@@ -52,8 +54,11 @@ public class TFSClient {
 	
 	public static void write_chunks(List<Integer> chunkuuids, byte[] data) throws IOException{
 		List<byte[]> chunks = new ArrayList<byte[]>();
-		//System.out.println(data.length());
 		int remainingLetters = data.length;
+		if(remainingLetters == 0){
+			chunks.add("".getBytes());
+		}
+		
 		for(int i=0; i<data.length; i+= master.chunkSize){
 			if(remainingLetters<= master.chunkSize){
 				chunks.add(Arrays.copyOfRange(data, i, i + remainingLetters));
@@ -66,6 +71,7 @@ public class TFSClient {
 		}
 				
 		Map<Integer, TFSChunkserver> chunkserverTable = master.getServers();
+		
 		for(int i =0; i<chunkuuids.size(); i++){
 			int chunkuuid = chunkuuids.get(i);
 			int chunkloc = master.getLocation(chunkuuid);
