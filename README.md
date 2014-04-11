@@ -6,7 +6,7 @@ Tiny File System Project
 Programming language : java
 Run with Eclipse IDE
 
-We basically created individual files for respective test cases such as Test1.java, Test2.java, Test3.java, Test4.java, Test5.java, Test6.java and Test7.java so that the tests can be run individually. We also have App.java, Sequence.java, TFSChunkserver.java, TFSMaster.java and TFSClient.java. After running the test files, chconfig.csv, config.csv and dirconfig.csv will be populated with log records. 
+We basically created individual files for respective test cases such as Test1.java, Test2.java, Test3.java, Test4.java, Test5.java, Test6.java and Test7.java because the tests are expected to be run individually. We also have App.java, Sequence.java, TFSChunkserver.java, TFSMaster.java and TFSClient.java. After running the test files, chconfig.csv, config.csv and dirconfig.csv will be populated with log records. Please clear all the .csv files before the running the tests.
 
 
 *****Purpose of chconfig.csv : it stores the mapping from chunkID to chunkLoc and both of them are integer(the first is the ID of the chunk, the second integer is the ID of the chunk location)
