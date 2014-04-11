@@ -19,9 +19,9 @@ public class Test7 {
     	//read the size and payload pairs in the specified file name
     	
     	List<Integer> ids = client.getUUIDS(filename);
-    	//byte[] b = client.fileToByte(new File(filename));
+    	byte []b = client.read(filename);
     	System.out.println("Size of \"" + filename + "\" is " + ids.size() + " chunk(s)");
-    	//System.out.println("Size of \"" + filename + "\" is " + b.length + " byte(s)");
+    	System.out.println("Size of \"" + filename + "\" is " + b.length + " byte(s)");
     }
 
     public static void main (String[] args) throws Exception{
@@ -29,7 +29,8 @@ public class Test7 {
 		TFSMaster master = new TFSMaster();
 	  	TFSClient client = new TFSClient(master);
 		String filename = "1\\2\\File1";
-		
+
+		//client.write(filename, "HOHOHOHO".getBytes());
 		countFile(client, filename);		
 	}
   
