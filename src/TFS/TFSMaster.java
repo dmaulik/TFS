@@ -1,6 +1,7 @@
 package TFS;
 
 import java.util.*;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,9 +9,27 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.net.*;
+import java.awt.*;
+import java.awt.event.*;
 
-public class TFSMaster {
-    private int numOfChunkservers = 1;
+
+public class TFSMaster implements Serializable{
+	private ObjectOutputStream outputToClient;
+	private ObjectInputStream inputFromClient;
+	private PrintWriter pw;
+	private BufferedReader br;
+	private ServerSocket serverSocket;
+	
+	public MyObject obj;
+	//array of clients
+	private TreeMap<Integer, HandleAClient> clients = new TreeMap<Integer, HandleAClient>();
+
+    private int numOfChunkservers = 4;
     public int chunkSize = 64;
     public int chunkRobin = 0;
     public Sequence counter = new Sequence();
@@ -22,7 +41,12 @@ public class TFSMaster {
     private Map<String, Integer> folderTable; // Map foldername to chunkloc id
     private List<String> folderList;
 
+    public static void main(String[] args) throws IOException{
+		new TFSMaster();
+	} 
+    
     public TFSMaster() throws IOException {
+    	obj = new MyObject();
         fileTable = new HashMap<String, List<Integer>>();
         chunkserverTable = new HashMap<Integer, TFSChunkserver>();
         chunkTable = new HashMap<Integer, Integer>();
@@ -67,6 +91,82 @@ public class TFSMaster {
         	int i = counter.nextValue();	//so that chunkID are still unique
         }
         br.close();
+        
+        //Start the server
+        try{
+			serverSocket = new ServerSocket(7500);
+			System.out.println("Server started");
+		} 
+		catch(Exception ex){ 
+			ex.printStackTrace();
+			System.exit(0);
+		}
+        
+        //Wait for Clients
+        
+        try{			
+			while(true){				
+				Socket socket = serverSocket.accept();
+				System.out.println("Got client");
+				//create an input stream and an output stream from the socket
+				outputToClient = new ObjectOutputStream(socket.getOutputStream());
+				inputFromClient = new ObjectInputStream(socket.getInputStream());				
+
+				try{
+
+					Integer clientNo = (Integer)inputFromClient.readObject();
+					System.out.println((Integer)clientNo);
+
+					switch(clientNo){
+					
+					//Client
+					case 0://TODO
+
+					//ChunkServers
+					case 1: ChunkServerHandler csHandler = new ChunkServerHandler(socket, this);
+							clients.put(clientNo,csHandler);
+							new Thread(csHandler).start();		
+							break;
+					/*
+					case 2: KitsManagerHandler kitsManHandler = new KitsManagerHandler(socket, this);
+							clients.put(clientNo,kitsManHandler);
+							new Thread(kitsManHandler).start();		
+							break;						
+
+					case 3: FactoryProductionHandler factoryProdHandler = new FactoryProductionHandler(socket, this);
+							clients.put(clientNo,factoryProdHandler);
+							new Thread(factoryProdHandler).start();		
+							break;								
+
+					case 4: GantryRobotManHandler gantryRobotHandler = new GantryRobotManHandler(socket, this);
+							clients.put(clientNo,gantryRobotHandler);
+							new Thread(gantryRobotHandler).start();		
+							break;
+
+					case 5: LaneHandler lanehandler = new LaneHandler(socket,this);
+							clients.put(clientNo, lanehandler);
+							new Thread(lanehandler).start();
+							break;
+
+					case 6: PandKHandler pandkHandler = new PandKHandler(socket,this);
+							clients.put(clientNo, pandkHandler);
+							new Thread(pandkHandler).start();
+							break;
+					*/
+					default:
+
+					}
+
+				}
+				catch(Exception ex){
+					ex.printStackTrace();
+				}						
+			}	
+		}
+
+		catch(IOException ex){
+			ex.printStackTrace();
+		}
     }
 
     protected Map getServers(){
@@ -311,6 +411,12 @@ public class TFSMaster {
     	}
     	
     }*/
-	
+    public ObjectOutputStream getOutput(){
+		return outputToClient;
+	}
+
+	public ObjectInputStream getInput(){
+		return inputFromClient;
+	}
 }
 
