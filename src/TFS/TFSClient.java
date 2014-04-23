@@ -12,26 +12,23 @@ import javax.swing.*;
 import java.util.*;
 
 public class TFSClient implements Serializable{
-	//private static final int Integer = 0;
-	static TFSMaster master;
-	MyObject toSend;
+
 
 	ServerSocket mysocket; // Socket for Master
-	ObjectOutputStream out;
-	ObjectInputStream in;
-	HandlerForClient masterHandler;
-	HandlerForClient chunkserverHandler;
+	ObjectOutputStream out;	//Output stream
+	ObjectInputStream in;	//InputStream
+	
+	HandlerForClient masterHandler;	//Handle connection with master
+	HandlerForClient chunkserverHandler;	//Handle connection with chunkserver
 	
 	static int chunkSize = 64;
-	int clients = 0;
+	int clients = 0;	//Counter.
 	
 	public static void main(String[] args){
 		new TFSClient();
 	} 
 	
 	TFSClient(){
-		toSend = new MyObject(); // object 
-		
 		try{
 			mysocket = new ServerSocket(7499);
 		} 
@@ -42,15 +39,14 @@ public class TFSClient implements Serializable{
 
 		try{
 			while(clients<2){
-				//Socket socket = mysocket.accept();
+
 				Socket serversocket;
-				if(clients == 0){
-					serversocket = new Socket("localhost", 7500);//To Master
-				}
-				else{
-					serversocket = new Socket("localhost", 7500+clients); //To Chunkserver
-				}
-				Socket socket = mysocket.accept();
+				if(clients == 0)
+					serversocket = new Socket("localhost", 7500);//connection to Master
+				else
+					serversocket = new Socket("localhost", 7500+clients); //connection to Chunkserver
+	
+				Socket socket = mysocket.accept();	//Accept connection
 				out = new ObjectOutputStream(serversocket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
 				
@@ -95,9 +91,7 @@ public class TFSClient implements Serializable{
 					String s = new String(chunkserverHandler.read("1\\2\\5\\File5",uuids));
 				    System.out.println("Content : " + s);
 				}
-				else if(command == 5){
-					
-					
+				else if(command == 5){					
 					String filename = "1\\2\\5\\File5";
 					String destination = "src\\test";
 					
@@ -120,7 +114,7 @@ public class TFSClient implements Serializable{
 					countFile(filename);	
 				}
 				else if(command == 8){
-					
+					//Do it later
 				}
 				System.out.println("\nDone\n");
 			}
@@ -146,8 +140,7 @@ public class TFSClient implements Serializable{
 				pD = parentDir + "\\" + i;
 				d = new File(pD);
 			}
-			masterHandler.createDirectory(d.toString());
-			
+			masterHandler.createDirectory(d.toString());	
 			makeDirs(pD + "\\", i*2, n);
 			makeDirs(pD + "\\", i*2+1, n);
 		}
@@ -163,17 +156,12 @@ public class TFSClient implements Serializable{
 		
 		for(int i =1; i < n+1; i++){
 			File a = new File(pathName + "\\" + "File" + i);
-			//System.out.println(a.toString())
-			masterHandler.createFile(pathName + "\\" + "File" + i);
-			
+			masterHandler.createFile(pathName + "\\" + "File" + i);	
 		}
-		//List<String> s = master.folderInDirectory(pathName);	
 		List <String> s = masterHandler.getFolderInDirectory(pathName);
 		
 		if(s.size()>0){		
 			for(int i = 0; i< s.size(); i++){
-				//File temp = new File(pathName + "\\" + s.get(i));
-				//System.out.println(s[i]);
 				createFiles(s.get(i), n);
 			}	
 		}
@@ -200,7 +188,7 @@ public class TFSClient implements Serializable{
 		String []s = filename.split("\\\\");
 		String folderName = "";
 		if(s.length == 1){
-			//create directly. No folder
+			//Do nothing - No folder
 		}
 		else{
 			folderName += s[0];
@@ -214,7 +202,6 @@ public class TFSClient implements Serializable{
 			}
 		}
 		
-		//File file = new File(lpath);
 		byte[] b = masterHandler.fileToByte(f);
 		List <Integer> uuids = masterHandler.write(filename, b);
 		chunkserverHandler.write_chunks(uuids, b);
@@ -226,8 +213,7 @@ public class TFSClient implements Serializable{
 		if(!masterHandler.fileExists(filename)){
 			System.out.println("File doesn't exist in TFS");
 			return;
-		}
-		
+		}	
 		File file = new File(lpath);
 		List<Integer> uuids = masterHandler.getUUIDs(filename);
 		byte[] content = chunkserverHandler.read(filename,uuids);
@@ -248,7 +234,6 @@ public class TFSClient implements Serializable{
 		fos.write(content);
 		fos.flush();
 		fos.close();
-
 	} 
 	
 	//TEST #6
@@ -263,7 +248,7 @@ public class TFSClient implements Serializable{
 		String []s = filename.split("\\\\");
 		String folderName = "";
 		if(s.length == 1){
-			//create directly. No folder
+			//Do nothing. No folder
 		}
 		else{
 			folderName += s[0];
@@ -278,7 +263,6 @@ public class TFSClient implements Serializable{
 		}
 		byte[] b = masterHandler.fileToByte(f);
 		int size = b.length;
-		//System.out.println(size);
 		String sizeInString = Integer.toString(size);
 		byte[] sizeInByte = sizeInString.getBytes();
 		byte[] newByte = new byte[4];
@@ -294,42 +278,20 @@ public class TFSClient implements Serializable{
 		}
 		
 		String nB = new String(newByte);
-		
-		int nB2 = Integer.parseInt(nB);
-		
-		//System.out.println("Integer: "+size);
-		//System.out.println("String: "+nB);
-		//System.out.println("BytesToInt: " + nB2);
-		
-		
-		//byte[] byteSize=new byte[4];
-		//ByteBuffer byteSize = ByteBuffer.wrap(temp.getBytes());
-		
-		//byteSize= temp.getBytes();
-		
-		//byteSize=client.intToByteArray(size);
-		//int temp=client.byteArrayToInt(byteSize);
 		byte[] combined = new byte[b.length + 4];
 		
-		//String s2 = new String(""+temp);
-	    //System.out.println(temp);
 		for (int i = 0; i < combined.length; ++i)
-		{
 		    combined[i] = i < newByte.length ? newByte[i] : b[i - newByte.length];
-		}
+		    
 		String z = new String(combined);
 		//System.out.println(z);
 		
 		if(!masterHandler.fileExists(filename)){
 			List<Integer> uuids = masterHandler.write(filename, combined);
-			//System.out.println(uuids);
-			//System.out.println(combined);
 			chunkserverHandler.write_chunks(uuids, combined );
 		}
 		else{
 			List<Integer> uuids = masterHandler.write_append(filename, combined);
-			//System.out.println(uuids);
-			//System.out.println(combined);
 			chunkserverHandler.write_chunks(uuids, combined);
 		}
 	
@@ -349,13 +311,10 @@ public class TFSClient implements Serializable{
     	//read the size and payload pairs in the specified file name
     	
     	//List<Integer> ids = client.getUUIDS(filename);
-    	
 		List<Integer> ids = masterHandler.getUUIDs(filename);
     	System.out.println(ids);
-    	//File f= new File(filename);
 	
     	byte []b = chunkserverHandler.read(filename,ids);
-    	//client.fileToByte(f);
     	System.out.println("Size of \"" + filename + "\" is " + ids.size() + " chunk(s)");
     	System.out.println("Size of \"" + filename + "\" is " + b.length + " byte(s)");
     	int delta=0;
@@ -364,11 +323,9 @@ public class TFSClient implements Serializable{
     	
     	String nB = new String(size);
 		int nB2 = Integer.parseInt(nB);
-		//System.out.println(nB2);
 		int count=0;
 		while(delta<b.length){
 			count++;
-			//System.out.println(delta);
 			size= chunkserverHandler.seekByteSize(delta, filename, ids);
 	    	nB = new String(size);
 			nB2 = Integer.parseInt(nB);
@@ -384,12 +341,4 @@ public class TFSClient implements Serializable{
 	public ObjectInputStream getInput(){
 		return in;
 	}
-	
-	
-	//NOT USED
-	/*
-		public List<Integer> getUUIDS (String filename){
-			return master.getUUIDS(filename);
-		}
-	*/
 }

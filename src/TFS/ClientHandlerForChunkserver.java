@@ -10,18 +10,15 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 
 	public ClientHandlerForChunkserver(Socket socket, TFSChunkserver chunkserver) throws UnknownHostException, IOException{		
 		super(socket,chunkserver);
-		//System.out.println(socket.getLocalPort());
-		//System.out.println(socket.getOutputStream().toString());
-		//System.out.println("ClientHandlerForChunkserver spawned");
 	}
 
 
 	public void run(){
 		while(true){
-	
 			try{
 				MyObject obj = new MyObject();
 				try{
+					//Keep Reading for input from client
 					obj = (MyObject) inputFromClient.readObject();
 				}
 				catch (Exception e){
@@ -29,21 +26,23 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 				}
 
 				//System.out.println("Request from client: "+obj.s);
-				if(obj.s.equals("write")){
-					//System.out.println(new String((byte[])obj.params.get(1)));
+				if(obj.cmd.equals("write")){
+					//Writing the chunks to chunkserver
 					this.write((int)obj.params.get(0), (byte[]) obj.params.get(1));
 				}
-				else if (obj.s.equals("read")){
-					//System.out.println("Got read request");
+				else if (obj.cmd.equals("read")){
+					//Reading the chunks
 					int chunkID = (int) obj.params.get(0);
 					byte[] by = this.read(chunkID);
+					
+					//Reply to client
 					obj.params.clear();
 					obj.params.add(by);
 					outputToClient.writeObject(obj);
-					//System.out.println("Sent response");
 					outputToClient.flush();
 				}
-				else if (obj.s.equals("removeChunk")){
+				else if (obj.cmd.equals("removeChunk")){
+					//Remove chunks from chunkserver
 					this.removeChunk((int)obj.params.get(0));
 					obj.params.clear();
 				}
@@ -52,8 +51,6 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 			catch(Exception ex){
 				ex.printStackTrace();
 			}						
-
-
 		}
 
 	}
@@ -83,9 +80,7 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 		String local_filename = getFileName(chunkuuid);
 		File file = new File(local_filename);
 		
-		//FileWriter fw = new FileWriter(file.getAbsoluteFile());
 		FileOutputStream fos = new FileOutputStream(file);
-		//bw.write(chunk);
 		fos.write(chunk);
 		chunkserver.chunkTable.put(chunkuuid, local_filename.getBytes());
 		fos.flush();
@@ -96,12 +91,6 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 	{
 		byte[] data = null;
 		String localFilename = getFileName(chunkID);
-		//String currentLine;
-		//BufferedReader br = new BufferedReader(new FileReader(localFilename));
-		//while ((currentLine = br.readLine()) != null ){
-		//	data = currentLine.getBytes();
-		//}
-		//br.close();
 		data = fileToByte(new File(localFilename));
 		return data;
 	}

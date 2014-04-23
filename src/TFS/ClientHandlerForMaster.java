@@ -10,8 +10,6 @@ public class ClientHandlerForMaster extends HandleAClient {
 
 	public ClientHandlerForMaster(Socket socket, TFSMaster server){		
 		super(socket,server);
-		//System.out.println(socket.getLocalPort());
-		//System.out.println("ClientHandlerForMaster spawned");
 	}
 
 
@@ -28,7 +26,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 				}
 				
 				//System.out.println("Request from client: "+obj.s);
-				if(obj.s.equals("fileExists")){
+				if(obj.cmd.equals("fileExists")){
 					boolean b = exists((String)obj.params.get(0));
 					//Send response
 					obj.params.clear();
@@ -36,63 +34,65 @@ public class ClientHandlerForMaster extends HandleAClient {
 					outputToClient.writeObject(obj);
 				}
 			
-				else if (obj.s.equals("folderExists")){
+				else if (obj.cmd.equals("folderExists")){
 					boolean b = folderExists((String)obj.params.get(0));
 					//Send response
 					obj.params.clear();
 					obj.params.add(b);
 					outputToClient.writeObject(obj);
 				}
-				else if (obj.s.equals("allocateFolder")){
+				else if (obj.cmd.equals("allocateFolder")){
 					this.allocateFolder((String)obj.params.get(0));
-					//obj.params.clear();
 				}
-				else if (obj.s.equals("delete")){
+				else if (obj.cmd.equals("delete")){
 					this.delete((String)obj.params.get(0));
-					//obj.params.clear();
 				}
-				else if (obj.s.equals("deleteDirectory")){
+				else if (obj.cmd.equals("deleteDirectory")){
 					this.deleteDirectory((String)obj.params.get(0));
-					//obj.params.clear();
 				}
-				else if (obj.s.equals("chunkuuids")){
+				else if (obj.cmd.equals("chunkuuids")){
 					String s = (String)obj.params.get(0);
 					List<Integer> l = server.fileTable.get(s);
-					//System.out.println(l);
+					//Send reply
 					obj.params.clear();
 					obj.params.add(l);
 					outputToClient.writeObject(obj);
 					outputToClient.reset();
 				}
-				else if (obj.s.equals("allocAppend")){
+				else if (obj.cmd.equals("allocAppend")){
 					String s = (String)obj.params.get(0);
 					int i = (int)obj.params.get(1);
+					//Send reply
 					obj.params.clear();
 					obj.params.add(this.alloc_append(s, i));
 					outputToClient.writeObject(obj);
 				}
-				else if (obj.s.equals("allocate")){
+				else if (obj.cmd.equals("allocate")){
 					List<Integer> l = this.allocate((String)obj.params.get(0), (int)obj.params.get(1));
+					//Send reply
 					obj.params.clear();
 					obj.params.add(l);
 					outputToClient.writeObject(obj);
 				}
-				else if (obj.s.equals("folderInDirectory")){
+				else if (obj.cmd.equals("folderInDirectory")){
 					String pName = (String) obj.params.get(0);
 					List<String> l = this.folderInDirectory(pName);
+					//Send reply
 					obj.params.clear();
 					obj.params.add(l);
 					outputToClient.writeObject(obj);
 				}
-				//outputToClient.reset();
+				else if (obj.cmd.equals("getChunkservers")){
+					//Send chunkservers
+					obj.params.clear();
+					obj.params.add(this.getServers());
+					outputToClient.writeObject(obj);
+				}
 			}
 			catch(Exception ex){
 				ex.printStackTrace();
 			}						
-
-
 		}
-
 	}
 
 	protected Map getServers(){
@@ -168,23 +168,6 @@ public class ClientHandlerForMaster extends HandleAClient {
 		List<Integer> uuids = server.fileTable.get(filename);
 		List<Integer> append_uuids = allocateChunks(numChunks);
 		uuids.addAll(append_uuids);
-		//System.out.println(uuids);
-
-		//Modify the config file
-		/*
-	        String line = "";
-	        BufferedReader br = new BufferedReader(new FileReader("config.csv"));
-	        line = br.readLine();
-	        while((line = br.readLine()) != null){
-	        	String[] filenames = line.split(",");
-	        	if(filenames[0].equals(filename)){
-	        		for(int i = 0; i<append_uuids.size(); i++){
-	        			line += "," + append_uuids.get(i);  
-	        		}
-	        	}
-	        }
-	        br.close();
-		 */
 
 		//FIX Filetable
 		server.fileTable.remove(filename);
@@ -226,20 +209,13 @@ public class ClientHandlerForMaster extends HandleAClient {
 	}
 
 	protected boolean folderExists(String foldername){
-
 		return server.folderTable.containsKey(foldername);
-		//File dir = new File(foldername);
-		//return dir.exists();
-		//return folderList.contains(foldername);
 	}
 	protected void deleteDirectory(String folderName) throws IOException{
-		//System.out.println("Size:"+ folderList.size());
 		List<String>arr = new ArrayList<String>();
 		for(int i = 0; i < server.folderList.size(); i++){
 			String name = server.folderList.get(i);
 			if(folderName.length() <= name.length()){
-				//System.out.println("Foldername: " + folderName);
-				//System.out.println("Ss: " + name.substring(0, folderName.length()));
 				if(folderName.equals(name.substring(0, folderName.length()))){
 					arr.add(name);
 				}
@@ -287,6 +263,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 		String s0 = "";
 		for(int i=0 ; i<uuids.size(); i++){
 			int chunkLoc = server.chunkTable.get(uuids.get(i));
+			
 			//TODO FIX THIS TO MULTIPLE CHUNKSERVER
 			//TFSChunkserver cs = server.chunkserverTable.get(chunkLoc);
 			//cs.removeChunk(uuids.get(i));
@@ -294,8 +271,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 			Socket cssocket = new Socket("localhost", 7501);
 			ObjectOutputStream output = new ObjectOutputStream(cssocket.getOutputStream());
 			MyObject o = new MyObject();
-			o.s = "removeChunk";
-			o.from = "master";
+			o.cmd = "removeChunk";
 			o.params.add(uuids.get(i));
 			output.writeObject(o);
 
@@ -324,30 +300,8 @@ public class ClientHandlerForMaster extends HandleAClient {
 			fw.flush();
 		}
 		fw.close();
-		//Date date= new java.util.Date();
-		//Timestamp ts = new Timestamp(date.getTime());
-		//String deleted_filename = "/hidden/deleted/" + ts + filename;
-		//fileTable.put(deleted_filename, uuids);
-		//System.out.println("Deleted file: " + filename + " renamed to " + deleted_filename + " ready for gc ");
-	}
+		}
 
-	/*
-	    public void dump_metadata() throws IOException{ 	
-	    	System.out.println("Filetable: ");
-	    	for(Map.Entry entry : fileTable.entrySet()){
-	    		System.out.println(entry.getKey().toString() + entry.getValue().toString());	// ?????
-	    	}
-	    	System.out.println("Chunkservers: " + chunkserverTable.size());
-	    	System.out.println("Chunkserver Data: ");
-	    	for(Map.Entry entry : chunkTable.entrySet()){
-	    		int chunkLoc = (int)(entry.getValue());
-	    		int chunkID = (int)(entry.getKey());
-	    		String ch = chunkserverTable.get(chunkLoc).read(chunkID);
-	    		System.out.println(" "+ entry.getValue().toString() + ", " + entry.getKey().toString() +  "," + ch);// prints chunkLoc, chunkID, ch
-
-	    	}
-
-	    }*/
 	public ObjectOutputStream getOutput(){
 		return outputToClient;
 	}

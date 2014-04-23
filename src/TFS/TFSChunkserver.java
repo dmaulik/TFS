@@ -26,12 +26,12 @@ public class TFSChunkserver implements Serializable
 	protected Map<Integer, byte[]> chunkTable; //chunkID to fileName
 	protected String root;
 	protected String local_filesystem_root;
-	MyObject toSend;
-	Socket serversocket;
-	ServerSocket mysocket;
+	
+	Socket serversocket;	//Socket to Client
+	ServerSocket mysocket;	//My socket
 	static ObjectOutputStream out;
 	static ObjectInputStream in;
-	ClientHandlerForChunkserver csHandler;
+	ClientHandlerForChunkserver csHandler;	//Connection handler to client
 	
 	public static void main(String[] args){
 		new TFSChunkserver("0");
@@ -57,7 +57,6 @@ public class TFSChunkserver implements Serializable
 			try{
 				Socket socket = mysocket.accept();
 				serversocket = new Socket("localhost", 7499);	//ClientSocket
-				//Socket socket = mysocket.accept();
 				System.out.println("Got Client");
 				out = new ObjectOutputStream(serversocket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());

@@ -49,9 +49,10 @@ public class HandleAClient implements Runnable{
 	
 	public void sendObject(){
 		try{
-			server.obj.setString("from server");
+			server.obj.cmd = "from server";
+			
 			MyObject o = new MyObject();
-			o.setString("hi");
+			o.cmd = "hi";
 			outputToClient.writeObject(o);
 		
 		}

@@ -36,7 +36,7 @@ public class TFSMaster implements Serializable{
     int chunkRobin = 0;
     Sequence counter = new Sequence();
     
-    Map<Integer, TFSChunkserver> chunkserverTable; // Map chunkloc id to chunkserver id
+    Map<Integer, Integer> chunkserverTable; // Map chunkloc id to chunkserver PORT#
     Map<String, List<Integer>> fileTable; // Map filename to chunk ids
     Map<Integer, Integer> chunkTable; // Map chunk id to chunkloc id
     
@@ -50,18 +50,17 @@ public class TFSMaster implements Serializable{
     public TFSMaster() throws IOException {
     	obj = new MyObject();
         fileTable = new HashMap<String, List<Integer>>();
-        chunkserverTable = new HashMap<Integer, TFSChunkserver>();
+        chunkserverTable = new HashMap<Integer, Integer>();
         chunkTable = new HashMap<Integer, Integer>();
         folderList = new ArrayList<String>();
         folderTable = new HashMap<String,Integer>();
 
-        //TODO
-        /*
+  
         for(int i = 0; i < this.numOfChunkservers; i++){
-            TFSChunkserver cs = new TFSChunkserver(""+i);
-            chunkserverTable.put (i, cs);
+            //TFSChunkserver cs = new TFSChunkserver(""+i);
+            chunkserverTable.put (i, 7501+i);
         }
-        */
+        
         
         //Populate files
         String line = "";
@@ -113,13 +112,14 @@ public class TFSMaster implements Serializable{
         	while(true){
         		Socket socket = serverSocket.accept();
 				Socket clientsocket = new Socket("localhost", 7499);
-				//Socket socket = serverSocket.accept();
 				System.out.println("Got client");
+				
 				//create an input stream and an output stream from the socket
 				outputToClient = new ObjectOutputStream(clientsocket.getOutputStream());
 				inputFromClient = new ObjectInputStream(socket.getInputStream());				
 
 				try{
+					//Create new Thread to Handle each client
 					csHandler = new ClientHandlerForMaster(socket, this);
 					new Thread(csHandler).start();
 				}
