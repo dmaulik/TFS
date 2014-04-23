@@ -19,6 +19,9 @@ import java.awt.event.*;
 
 
 public class TFSMaster implements Serializable{
+	
+	public static final int numOfChunkservers = 4;
+	
 	ObjectOutputStream outputToClient;
 	ObjectInputStream inputFromClient;
 	PrintWriter pw;
@@ -26,12 +29,13 @@ public class TFSMaster implements Serializable{
 	ServerSocket serverSocket;
 	ClientHandlerForMaster csHandler;
 	
+	
 	MyObject obj;
 	//array of clients
 	TreeMap<Integer, HandleAClient> chunkservers = new TreeMap<Integer, HandleAClient>();
 	TFSClient client;
 	
-    int numOfChunkservers = 1;
+
     int chunkSize = 64;
     int chunkRobin = 0;
     Sequence counter = new Sequence();

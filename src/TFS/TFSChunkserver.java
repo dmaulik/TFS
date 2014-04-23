@@ -44,7 +44,7 @@ public class TFSChunkserver implements Serializable
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
 		//createFolder(this.local_filesystem_root);
 		try{
-			mysocket = new ServerSocket(7501);
+			mysocket = new ServerSocket(7504);
 			System.out.println("Chunkserver started");
 		} 
 		catch(Exception ex){ 
@@ -57,7 +57,7 @@ public class TFSChunkserver implements Serializable
 			try{
 				Socket socket = mysocket.accept();
 				serversocket = new Socket("localhost", 7499);	//ClientSocket
-				System.out.println("Got Client");
+				//System.out.println("Got Client");
 				out = new ObjectOutputStream(serversocket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
 

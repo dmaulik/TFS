@@ -50,6 +50,12 @@ public class ClientHandlerForMaster extends HandleAClient {
 				else if (obj.cmd.equals("deleteDirectory")){
 					this.deleteDirectory((String)obj.params.get(0));
 				}
+				else if (obj.cmd.equals("getChunkserverToTalk")){
+					int i = server.chunkTable.get((int)obj.params.get(0));
+					obj.params.clear();
+					obj.params.add(i);
+					outputToClient.writeObject(obj);
+				}
 				else if (obj.cmd.equals("chunkuuids")){
 					String s = (String)obj.params.get(0);
 					List<Integer> l = server.fileTable.get(s);
@@ -144,6 +150,26 @@ public class ClientHandlerForMaster extends HandleAClient {
 		return chunkuuids;
 	}
 
+	protected List allocateChunksAppend(int numChunks, int chunkloc) throws IOException{
+		List<Integer> chunkuuids = new ArrayList<Integer>();
+		FileWriter fw = new FileWriter("chconfig.csv", true);
+		String s = "";
+		for(int i = 0; i < numChunks; i++){
+			int chunkuuid = server.counter.nextValue();
+			//int chunkloc = server.chunkRobin;
+			server.chunkTable.put (chunkuuid, chunkloc);
+			chunkuuids.add(chunkuuid);
+			s += chunkuuid + "," + chunkloc + "\r\n";
+			fw.flush();
+		}
+		//server.chunkRobin = (server.chunkRobin +1)%server.numOfChunkservers;
+		fw.append(s);
+		fw.flush();
+		fw.close();
+
+		return chunkuuids;
+	}
+	
 	protected List allocateChunks(int numChunks) throws IOException{
 		List<Integer> chunkuuids = new ArrayList<Integer>();
 		FileWriter fw = new FileWriter("chconfig.csv", true);
@@ -153,10 +179,10 @@ public class ClientHandlerForMaster extends HandleAClient {
 			int chunkloc = server.chunkRobin;
 			server.chunkTable.put (chunkuuid, chunkloc);
 			chunkuuids.add(chunkuuid);
-			server.chunkRobin = (server.chunkRobin +1)%server.numOfChunkservers;
 			s += chunkuuid + "," + chunkloc + "\r\n";
 			fw.flush();
 		}
+		server.chunkRobin = (server.chunkRobin +1)%server.numOfChunkservers;
 		fw.append(s);
 		fw.flush();
 		fw.close();
@@ -166,7 +192,8 @@ public class ClientHandlerForMaster extends HandleAClient {
 
 	protected List alloc_append(String filename, int numChunks) throws IOException{
 		List<Integer> uuids = server.fileTable.get(filename);
-		List<Integer> append_uuids = allocateChunks(numChunks);
+		int chunkloc = server.chunkTable.get(uuids.get(0));
+		List<Integer> append_uuids = allocateChunksAppend(numChunks,chunkloc);
 		uuids.addAll(append_uuids);
 
 		//FIX Filetable

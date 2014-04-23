@@ -72,6 +72,16 @@ public class HandlerForClient extends HandleAClient {
 		outputToClient.writeObject(o);
 		outputToClient.flush();
 	}
+	
+	public int getChunkserverToTalk(int uuid) throws IOException, ClassNotFoundException{
+		MyObject o = new MyObject();
+		o.cmd = "getChunkserverToTalk";
+		o.params.add(uuid);
+		outputToClient.writeObject(o);
+		o = (MyObject) inputFromClient.readObject();
+		int i = (int) o.params.get(0);
+		return i;
+	}
 
 	//DONE
 	public List<Integer> write(String filename, byte[] data) throws IOException, ClassNotFoundException{
@@ -112,15 +122,6 @@ public class HandlerForClient extends HandleAClient {
 			chunks.add(Arrays.copyOfRange(data, i, i + chunkSize));
 			remainingLetters -= chunkSize;
 		}
-
-
-		//Requesting chunkserverTable from Master
-		MyObject obj = new MyObject();
-		obj.cmd = "getChunkservers";
-		outputToClient.writeObject(obj);
-		//Getting the chunkserverTable
-		obj = (MyObject) inputFromClient.readObject();
-		Map<Integer,Integer> chunkserverTable = (Map<Integer, Integer>) obj.params.get(0);
 
 		/*
 			//TODO
@@ -255,9 +256,9 @@ public class HandlerForClient extends HandleAClient {
 			o2.params.add(chunkuuids.get(i));
 			outputToClient.writeObject(o2);
 
+
 			//Getting the reply from chunkserver
 			o2 = (MyObject) inputFromClient.readObject();
-
 			byte[] ch = (byte[]) o2.params.get(0);
 			chunks.add(ch);
 		}
