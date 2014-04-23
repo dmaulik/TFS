@@ -4,9 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class MyObject implements Serializable{
-	String from = "";
 	String s = "";
-	List<Object> params = new ArrayList<Object>();
 	
 	public MyObject(){
 		

@@ -1,14 +1,41 @@
 package TFS;
 
-import java.io.*;
 import java.util.*;
+import java.util.List;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.net.*;
+import java.awt.*;
+import java.awt.event.*;
 
-public class TFSChunkserver 
+public class TFSChunkserver implements Serializable
 {
 	protected String chunkLocation;
 	protected Map<Integer, byte[]> chunkTable; //chunkID to fileName
 	protected String root;
 	protected String local_filesystem_root;
+	MyObject toSend;
+	Socket serversocket;
+	ServerSocket mysocket;
+	static ObjectOutputStream out;
+	static ObjectInputStream in;
+	ClientHandlerForChunkserver csHandler;
+	
+	public static void main(String[] args){
+		new TFSChunkserver("0");
+	} 
 	
 	TFSChunkserver(String chunkloc){
 		this.chunkLocation = chunkloc;
@@ -16,84 +43,49 @@ public class TFSChunkserver
 		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
 		//createFolder(this.local_filesystem_root);
-	}
-	
-	public void createFolder(String folderName){
-		File dir = new File(folderName);
-
-		// if the directory does not exist, create it
-		if (!dir.exists()) {
-		    System.out.println("Creating directory: " + folderName);
-		    boolean result = dir.mkdir();  
-
-		    if(result) 
-		       System.out.println("Folder created");  
-		}else{
-			System.out.println("Directory already exists");
+		try{
+			mysocket = new ServerSocket(7501);
+			System.out.println("Chunkserver started");
+		} 
+		catch(Exception ex){ 
+			ex.printStackTrace();
+			System.exit(0);
 		}
-    }
-
-	
-	public void createFile (int chunkuuid){
-		String local_filename = getFileName(chunkuuid);
-		File file = new File(local_filename);
-	}
-	
-	public void write (int chunkuuid, byte[] chunk) throws IOException
-	{
-		String local_filename = getFileName(chunkuuid);
-		File file = new File(local_filename);
 		
-		//FileWriter fw = new FileWriter(file.getAbsoluteFile());
-		FileOutputStream fos = new FileOutputStream(file);
-		//bw.write(chunk);
-		fos.write(chunk);
-		chunkTable.put(chunkuuid, local_filename.getBytes());
-		fos.flush();
-		fos.close();
+		try{
+		while(true){
+			try{
+				Socket socket = mysocket.accept();
+				serversocket = new Socket("localhost", 7499);	//ClientSocket
+				//Socket socket = mysocket.accept();
+				System.out.println("Got Client");
+				out = new ObjectOutputStream(serversocket.getOutputStream());
+				in = new ObjectInputStream(socket.getInputStream());
+
+				try{
+					csHandler = new ClientHandlerForChunkserver(socket, this);
+					new Thread(csHandler).start();
+				}
+				catch(Exception ex){
+					ex.printStackTrace();
+				}	
+
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
+		}catch (Exception e ){
+			e.printStackTrace();
+		}
 	}
 
-	public byte[] read (int chunkID) throws IOException
-	{
-		byte[] data = null;
-		String localFilename = getFileName(chunkID);
-		//String currentLine;
-		//BufferedReader br = new BufferedReader(new FileReader(localFilename));
-		//while ((currentLine = br.readLine()) != null ){
-		//	data = currentLine.getBytes();
-		//}
-		//br.close();
-		data = fileToByte(new File(localFilename));
-		return data;
-	}
-	
-	public String getFileName (int chunkID)
-	{	
-		return root + "\\" + Integer.toString(chunkID) + ".tfs";
-	}
-	
-	public void removeChunk(int chunkID){
-		File f = new File(root + "\\" + Integer.toString(chunkID) + ".tfs");
-		f.delete();
+
+	public ObjectOutputStream getOutput(){
+		return out;
 	}
 
-	public byte[] fileToByte (File file) throws IOException{
-
-	    byte []buffer = new byte[(int) file.length()];
-	    InputStream ios = null;
-	    try {
-	        ios = new FileInputStream(file);
-	        if ( ios.read(buffer) == -1 ) {
-	            throw new IOException("EOF reached while trying to read the whole file");
-	        }        
-	    } finally { 
-	        try {
-	             if ( ios != null ) 
-	                  ios.close();
-	        } catch ( IOException e) {
-	        }
-	    }
-
-	    return buffer;
+	public ObjectInputStream getInput(){
+		return in;
 	}
 }
