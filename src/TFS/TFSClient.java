@@ -90,8 +90,16 @@ public class TFSClient implements Serializable{
 					masterHandler.deleteDirectory("1\\2");
 				}
 				else if(command == 4){
+					int replicas = 1;
+					if(replicas <= 0 || replicas>noOfChunkservers){
+						System.out.println("ERROR!!");
+						break;
+					}
 					storeLocalFile("src\\test123.txt", "1\\2\\5\\File5");
-
+					for(int i=0; i<replicas-1; i++){
+						storeLocalFile("src\\test123.txt", "1\\2\\5\\File5" + "copy" + i);
+					}
+					
 					List<Integer> uuids = masterHandler.getUUIDs("1\\2\\5\\File5");
 					int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
 					String s = new String(chunkserverHandlers.get(cs).read("1\\2\\5\\File5",uuids));
