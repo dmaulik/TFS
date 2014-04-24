@@ -46,6 +46,14 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 					this.removeChunk((int)obj.params.get(0));
 					obj.params.clear();
 				}
+				/*else if (obj.cmd.equals("versionInquery")){
+					int version = chunkserver.versionNumber;
+					//Reply to client
+					obj.params.clear();
+					obj.params.add(version);
+					outputToClient.writeObject(obj);
+					outputToClient.flush();
+				}*/
 				
 			}
 			catch(Exception ex){
@@ -73,6 +81,7 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 	public void createFile (int chunkuuid){
 		String local_filename = getFileName(chunkuuid);
 		File file = new File(local_filename);
+		chunkserver.versionNumber++;
 	}
 	
 	public void write (int chunkuuid, byte[] chunk) throws IOException
@@ -85,6 +94,7 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 		chunkserver.chunkTable.put(chunkuuid, local_filename.getBytes());
 		fos.flush();
 		fos.close();
+		chunkserver.versionNumber++;
 	}
 
 	public byte[] read (int chunkID) throws IOException

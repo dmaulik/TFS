@@ -32,6 +32,7 @@ public class TFSChunkserver implements Serializable
 	static ObjectOutputStream out;
 	static ObjectInputStream in;
 	ClientHandlerForChunkserver csHandler;	//Connection handler to client
+	int versionNumber = 0; //Version number of the chunkserver
 	
 	public static void main(String[] args){
 		new TFSChunkserver("0");
@@ -44,7 +45,7 @@ public class TFSChunkserver implements Serializable
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
 		//createFolder(this.local_filesystem_root);
 		try{
-			mysocket = new ServerSocket(7504);
+			mysocket = new ServerSocket(7501);
 			System.out.println("Chunkserver started");
 		} 
 		catch(Exception ex){ 
