@@ -13,7 +13,7 @@ import java.util.*;
 
 public class TFSClient implements Serializable{
 
-	public static final int noOfChunkservers = 4;
+	public static final int noOfChunkservers = 1;
 
 	ServerSocket mysocket; // Socket for Master
 	ObjectOutputStream out;	//Output stream
@@ -80,7 +80,8 @@ public class TFSClient implements Serializable{
 				command = scan.nextInt();
 				
 				if(command == 1){
-					makeDirs("", 1,7);
+					test1(7,3);
+					//makeDirs("", 1,7);
 				}
 				else if(command == 2){
 					createFiles("1\\2",5);
@@ -132,6 +133,36 @@ public class TFSClient implements Serializable{
 	
 	
 	//TEST #1
+	public void test1(int n, int fanout) throws ClassNotFoundException, IOException{
+		if(fanout == 0){
+			String pD;
+			for(int i=1; i <= n; i++){
+				pD = "" +i;
+				masterHandler.createDirectory(pD);
+			}
+		}
+		else{
+			String pD = "1";
+			String temp = "";
+			int count = 1;
+			
+			masterHandler.createDirectory(pD);
+			while(count < n){
+				for(int i=0; i<fanout; i++){
+					count++;
+					if(i == 0)
+						temp = Integer.toString(count);
+					masterHandler.createDirectory(pD + "\\" + count);
+					if(i==fanout-1)
+						pD = pD + "\\" + temp;
+					if(count == n)
+						break;
+				}
+			}
+		}
+	}
+	
+	//TEST #1 - No longer used
 	public void makeDirs(String parentDir, int i, int n) throws IOException, ClassNotFoundException{
 		if(i > n)
 			return;
