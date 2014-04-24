@@ -21,6 +21,9 @@ import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ *
+ */
 public class TFSChunkserver implements Serializable
 {
 	protected String chunkLocation;
@@ -35,11 +38,19 @@ public class TFSChunkserver implements Serializable
 	static ObjectInputStream in;
 	ClientHandlerForChunkserver csHandler;	//Connection handler to client
 	int versionNumber = 0; //Version number of the chunkserver
-	
+
+    /**
+     *
+     * @param args
+     */
 	public static void main(String[] args){
 		new TFSChunkserver("0");
-	} 
-	
+	}
+
+    /**
+     *
+     * @param chunkloc
+     */
 	TFSChunkserver(String chunkloc){
 		this.chunkLocation = chunkloc;
 		this.chunkTable = new HashMap<Integer, byte[]>();
@@ -83,11 +94,18 @@ public class TFSChunkserver implements Serializable
 		}
 	}
 
-
+    /**
+     *
+     * @return
+     */
 	public ObjectOutputStream getOutput(){
 		return out;
 	}
 
+    /**
+     *
+     * @return
+     */
 	public ObjectInputStream getInput(){
 		return in;
 	}

@@ -17,7 +17,9 @@ import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
 
-
+/**
+ *
+ */
 public class TFSMaster implements Serializable{
 	
 	public static final int numOfChunkservers = 3;
@@ -47,10 +49,19 @@ public class TFSMaster implements Serializable{
     Map<String, Integer> folderTable; // Map foldername to chunkloc id
     List<String> folderList;
 
+    /**
+     *
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException{
 		new TFSMaster();
-	} 
-    
+	}
+
+    /**
+     *
+     * @throws IOException
+     */
     public TFSMaster() throws IOException {
     	obj = new MyObject();
         fileTable = new HashMap<String, List<Integer>>();
@@ -137,12 +148,19 @@ public class TFSMaster implements Serializable{
 			ex.printStackTrace();
 		}
     }
-    
 
+    /**
+     *
+     * @return
+     */
     public ObjectOutputStream getOutput(){
 		return outputToClient;
 	}
 
+    /**
+     * 
+     * @return
+     */
 	public ObjectInputStream getInput(){
 		return inputFromClient;
 	}

@@ -4,15 +4,23 @@ import java.net.*;
 import java.util.*;
 
 
-
+/**
+ *
+ */
 public class ClientHandlerForMaster extends HandleAClient {
 
-
+    /**
+     *
+     * @param socket
+     * @param server
+     */
 	public ClientHandlerForMaster(Socket socket, TFSMaster server){		
 		super(socket,server);
 	}
 
-
+    /**
+     *
+     */
 	public void run(){
 		while(true){
 	
@@ -101,10 +109,19 @@ public class ClientHandlerForMaster extends HandleAClient {
 		}
 	}
 
+    /**
+     *
+     * @return
+     */
 	protected Map getServers(){
 		return server.chunkserverTable;
 	}
 
+    /**
+     *
+     * @param folderName
+     * @return
+     */
 	protected List<String> folderInDirectory(String folderName){
 		List<String>arr = new ArrayList<String>();
 		for(int i = 0; i < server.folderList.size(); i++){
@@ -118,6 +135,11 @@ public class ClientHandlerForMaster extends HandleAClient {
 		return arr;
 	}
 
+    /**
+     *
+     * @param folderName
+     * @throws IOException
+     */
 	protected void allocateFolder(String folderName) throws IOException{
 		int serverloc = server.chunkRobin;
 		server.chunkRobin = (server.chunkRobin +1)%server.numOfChunkservers;
@@ -133,7 +155,13 @@ public class ClientHandlerForMaster extends HandleAClient {
 		fw.close();
 	}
 
-
+    /**
+     *
+     * @param filename
+     * @param numChunks
+     * @return
+     * @throws IOException
+     */
 	protected List allocate(String filename, int numChunks) throws IOException{
 		FileWriter fw = new FileWriter("config.csv", true);
 		List<Integer> chunkuuids = allocateChunks(numChunks);
@@ -150,6 +178,13 @@ public class ClientHandlerForMaster extends HandleAClient {
 		return chunkuuids;
 	}
 
+    /**
+     *
+     * @param numChunks
+     * @param chunkloc
+     * @return
+     * @throws IOException
+     */
 	protected List allocateChunksAppend(int numChunks, int chunkloc) throws IOException{
 		List<Integer> chunkuuids = new ArrayList<Integer>();
 		FileWriter fw = new FileWriter("chconfig.csv", true);
@@ -169,7 +204,13 @@ public class ClientHandlerForMaster extends HandleAClient {
 
 		return chunkuuids;
 	}
-	
+
+    /**
+     *
+     * @param numChunks
+     * @return
+     * @throws IOException
+     */
 	protected List allocateChunks(int numChunks) throws IOException{
 		List<Integer> chunkuuids = new ArrayList<Integer>();
 		FileWriter fw = new FileWriter("chconfig.csv", true);
@@ -190,6 +231,13 @@ public class ClientHandlerForMaster extends HandleAClient {
 		return chunkuuids;
 	}
 
+    /**
+     *
+     * @param filename
+     * @param numChunks
+     * @return
+     * @throws IOException
+     */
 	protected List alloc_append(String filename, int numChunks) throws IOException{
 		List<Integer> uuids = server.fileTable.get(filename);
 		int chunkloc = server.chunkTable.get(uuids.get(0));
@@ -219,25 +267,56 @@ public class ClientHandlerForMaster extends HandleAClient {
 		return append_uuids;
 	}
 
+    /**
+     *
+     * @param uuid
+     * @return
+     */
 	protected int getLocation(int uuid){
 		return server.chunkTable.get(uuid);
 	}
 
+    /**
+     *
+     * @param foldername
+     * @return
+     */
 	protected int getFolderLocation(String foldername){
 		return server.folderTable.get(foldername);
 	}
 
+    /**
+     *
+     * @param filename
+     * @return
+     */
 	protected List<Integer> getUUIDS(String filename){
 		return server.fileTable.get(filename);
 	}
 
+    /**
+     *
+     * @param filename
+     * @return
+     */
 	protected boolean exists(String filename){
 		return server.fileTable.containsKey(filename);
 	}
 
+    /**
+     *
+     * @param foldername
+     * @return
+     */
 	protected boolean folderExists(String foldername){
 		return server.folderTable.containsKey(foldername);
 	}
+
+    /**
+     *
+     * @param folderName
+     * @throws IOException
+     */
 	protected void deleteDirectory(String folderName) throws IOException{
 		List<String>arr = new ArrayList<String>();
 		for(int i = 0; i < server.folderList.size(); i++){
@@ -278,6 +357,11 @@ public class ClientHandlerForMaster extends HandleAClient {
 		}
 	}
 
+    /**
+     *
+     * @param filename
+     * @throws IOException
+     */
 	protected void delete(String filename) throws IOException{
 		List<Integer> uuids = server.fileTable.get(filename);
 		server.fileTable.remove(filename);
@@ -329,10 +413,18 @@ public class ClientHandlerForMaster extends HandleAClient {
 		fw.close();
 		}
 
+    /**
+     *
+     * @return
+     */
 	public ObjectOutputStream getOutput(){
 		return outputToClient;
 	}
 
+    /**
+     *
+     * @return
+     */
 	public ObjectInputStream getInput(){
 		return inputFromClient;
 	}

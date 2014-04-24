@@ -11,6 +11,9 @@ import javax.swing.*;
 
 import java.util.*;
 
+/**
+ *
+ */
 public class TFSClient implements Serializable{
 
 	public static final int noOfChunkservers = 3;
@@ -26,11 +29,18 @@ public class TFSClient implements Serializable{
 	static int chunkSize = 64;
 	
 	int clients = 0;	//Counter.
-	
+
+    /**
+     *
+     * @param args
+     */
 	public static void main(String[] args){
 		new TFSClient();
-	} 
-	
+	}
+
+    /**
+     *
+     */
 	TFSClient(){
 		try{
 			mysocket = new ServerSocket(7499);
@@ -158,9 +168,15 @@ public class TFSClient implements Serializable{
 			ex.printStackTrace();
 		}		
 	}
-	
-	
-	//TEST #1
+
+
+    /**
+     * test1
+     * @param n
+     * @param fanout
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
 	public void test1(int n, int fanout) throws ClassNotFoundException, IOException{
 		if(fanout == 0){
 			String pD;
@@ -189,8 +205,15 @@ public class TFSClient implements Serializable{
 			}
 		}
 	}
-	
-	//TEST #1 - No longer used
+
+    /**
+     * TEST #1 - No longer used
+     * @param parentDir
+     * @param i
+     * @param n
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void makeDirs(String parentDir, int i, int n) throws IOException, ClassNotFoundException{
 		if(i > n)
 			return;
@@ -210,8 +233,14 @@ public class TFSClient implements Serializable{
 			makeDirs(pD + "\\", i*2+1, n);
 		}
 	}
-	
-	//TEST #2
+
+    /**
+     * TEST #2
+     * @param pathName
+     * @param n
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void createFiles(String pathName, int n) throws IOException, ClassNotFoundException{
 		if(!masterHandler.folderExists(pathName)){
 			System.out.println("Folder doesn't exist");
@@ -233,8 +262,14 @@ public class TFSClient implements Serializable{
 	}
 	
 	//TEST #3 -> No Need to use a new method
-	
-	//TEST #4
+
+    /**
+     * TEST #4
+     * @param lpath
+     * @param filename
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void storeLocalFile(String lpath, String filename) throws IOException, ClassNotFoundException{
 		
 		File f = new File(lpath);
@@ -271,9 +306,14 @@ public class TFSClient implements Serializable{
 		List <Integer> uuids = masterHandler.write(filename, b);
 		int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
 		chunkserverHandlers.get(0).write_chunks(uuids, b);
-	} 
-	
-	//TEST #5
+	}
+
+    /**
+     * TEST #5
+     * @param filename
+     * @param lpath
+     * @throws Exception
+     */
 	public void storeTFSFile(String filename, String lpath) throws Exception{
 		
 		if(!masterHandler.fileExists(filename)){
@@ -301,9 +341,15 @@ public class TFSClient implements Serializable{
 		fos.write(content);
 		fos.flush();
 		fos.close();
-	} 
-	
-	//TEST #6
+	}
+
+    /**
+     * TEST #6
+     * @param lpath
+     * @param filename
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void append(String lpath, String filename) throws IOException, ClassNotFoundException{
 		File f = new File(lpath);
 		if(!f.exists()){
@@ -382,9 +428,13 @@ public class TFSClient implements Serializable{
 		}
 	
 	}
-	
-	//TEST #7
-	
+
+    /**
+     * test7
+     * @param filename
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void countFile (String filename) throws IOException, ClassNotFoundException {
     	//If the input TFS file does not exist then return an error
     	if (!masterHandler.fileExists(filename))
@@ -420,11 +470,19 @@ public class TFSClient implements Serializable{
 		}
 		System.out.println("The TFSfile contains "+count+" logical files");
     }
-	
+
+    /**
+     *
+     * @return
+     */
 	public ObjectOutputStream getOutput(){
 		return out;
 	}
 
+    /**
+     *
+     * @return
+     */
 	public ObjectInputStream getInput(){
 		return in;
 	}

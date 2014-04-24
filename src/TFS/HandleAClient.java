@@ -4,7 +4,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-
+/**
+ *
+ */
 public class HandleAClient implements Runnable{
 	TFSMaster server;
 	TFSChunkserver chunkserver;
@@ -13,9 +15,13 @@ public class HandleAClient implements Runnable{
 	protected ObjectOutputStream outputToClient;
 	protected ObjectInputStream inputFromClient;
 
-
 	public HandleAClient(){}
-	
+
+    /**
+     *
+     * @param socket
+     * @param client
+     */
 	public HandleAClient(Socket socket, TFSClient client){
 		this.client = client;
 		this.socket = socket;
@@ -24,6 +30,11 @@ public class HandleAClient implements Runnable{
 		//inputFromClient = client.getInput();
 	}
 
+    /**
+     *
+     * @param socket
+     * @param server
+     */
 	public HandleAClient(Socket socket, TFSMaster server){
 		this.server = server;
 		this.socket = socket; // initialize socket
@@ -33,7 +44,14 @@ public class HandleAClient implements Runnable{
 
 		//System.out.println("client handler spawned");		
 	}
-	
+
+    /**
+     *
+     * @param socket
+     * @param chunkserver
+     * @throws UnknownHostException
+     * @throws IOException
+     */
 	public HandleAClient(Socket socket, TFSChunkserver chunkserver) throws UnknownHostException, IOException{
 		this.chunkserver = chunkserver;
 		this.socket = socket; // initialize socket
@@ -46,7 +64,10 @@ public class HandleAClient implements Runnable{
 
 
 	////////SENDING METHODS////////////////
-	
+
+    /**
+     *
+     */
 	public void sendObject(){
 		try{
 			server.obj.cmd = "from server";
@@ -63,15 +84,26 @@ public class HandleAClient implements Runnable{
 	}
 	
 	//getters
+
+    /**
+     *
+     * @return
+     */
 	public ObjectOutputStream getOutput(){
 		return outputToClient;
 	}
 
+    /**
+     *
+     * @return
+     */
 	public ObjectInputStream getInput(){
 		return inputFromClient;
 	}
 
-
+    /**
+     *
+     */
 	public void run() {
 
 

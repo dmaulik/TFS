@@ -3,8 +3,16 @@ package TFS;
 import java.util.*;
 import java.io.*;
 
+/**
+ *
+ */
 public class Restart{
-	
+
+    /**
+     *
+     * @param args
+     * @throws IOException
+     */
 	public static void main (String[] args) throws IOException{
 		
 		System.out.println("Clearing config files");

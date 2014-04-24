@@ -4,16 +4,26 @@ import java.net.*;
 import java.util.*;
 
 
-
+/**
+ *
+ */
 public class ChunkServerHandler extends HandleAClient {
 
 
+    /**
+     *
+     * @param socket
+     * @param server
+     */
 	public ChunkServerHandler(Socket socket, TFSMaster server){		
 		super(socket,server);
 		System.out.println("ChunkServer Handler spawned");
 	}
 
 
+    /**
+     *
+     */
 	public void run(){
 		while(true){
 

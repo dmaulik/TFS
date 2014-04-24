@@ -5,28 +5,61 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 
 
-
+/**
+ *
+ */
 public class ClientHandlerForChunkserver extends HandleAClient {
-	List<request> requests; 
+	List<request> requests;
+
+    /**
+     *
+     * @param socket                The socket it is connecting to
+     * @param chunkserver           The chunkserver
+     * @throws UnknownHostException Something something
+     * @throws IOException          Something something
+     */
 	public ClientHandlerForChunkserver(Socket socket, TFSChunkserver chunkserver) throws UnknownHostException, IOException{		
 		super(socket,chunkserver);
 		requests = new ArrayList<request>();
 	}
+
+    /**
+     *
+     */
 	class request{
 		int id;
 		byte[] array;
+
+        /**
+         *
+         * @param a Something
+         * @param b Something
+         */
 		public request(int a, byte[] b){
 			id = a;
 			array = b;
 		}
+
+        /**
+         *
+         * @return  An int id
+         */
 		public int getId() {
 			return id;
 		}
+
+        /**
+         *
+         * @return  A byte array
+         */
 		public byte[] getArray() {
 			return array;
 		}
 	}
 
+    /**
+     *
+     */
 	public void run(){
 		while(true){
 			try{
@@ -76,6 +109,11 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 		}
 
 	}
+
+    /**
+     *
+     * @param folderName    The name of the folder to be created
+     */
 	public void createFolder(String folderName){
 		File dir = new File(folderName);
 
@@ -91,13 +129,22 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 		}
     }
 
-	
+    /**
+     *
+     * @param chunkuuid The uuid of the chunk
+     */
 	public void createFile (int chunkuuid){
 		String local_filename = getFileName(chunkuuid);
 		File file = new File(local_filename);
 		chunkserver.versionNumber++;
 	}
-	
+
+    /**
+     *
+     * @param chunkuuid     The uuid of the chunk
+     * @param chunk         The chunk
+     * @throws IOException  Something
+     */
 	public void write (int chunkuuid, byte[] chunk) throws IOException
 	{
 		requests.add(new request(chunkuuid,chunk));
@@ -118,6 +165,12 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 		}
 	}
 
+    /**
+     *
+     * @param chunkID       Id of the chunk
+     * @return              A byte array
+     * @throws IOException  Something
+     */
 	public byte[] read (int chunkID) throws IOException
 	{
 		byte[] data = null;
@@ -125,17 +178,32 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 		data = fileToByte(new File(localFilename));
 		return data;
 	}
-	
+
+    /**
+     *
+     * @param chunkID   Id of the chunk
+     * @return          The file name
+     */
 	public String getFileName (int chunkID)
 	{	
 		return chunkserver.root + "\\" + Integer.toString(chunkID) + ".tfs";
 	}
-	
+
+    /**
+     *
+     * @param chunkID   Id of the chunk
+     */
 	public void removeChunk(int chunkID){
 		File f = new File(chunkserver.root + "\\" + Integer.toString(chunkID) + ".tfs");
 		f.delete();
 	}
 
+    /**
+     *
+     * @param file          A file
+     * @return              A byte array from the file
+     * @throws IOException  Something
+     */
 	public byte[] fileToByte (File file) throws IOException{
 
 	    byte []buffer = new byte[(int) file.length()];
@@ -155,13 +223,21 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 
 	    return buffer;
 	}
-	
+
+    /**
+     *
+     * @return
+     */
 	 public ObjectOutputStream getOutput(){
 			return outputToClient;
 		}
 
-		public ObjectInputStream getInput(){
-			return inputFromClient;
-		}
+    /**
+     *
+     * @return
+     */
+	public ObjectInputStream getInput(){
+		return inputFromClient;
+	}
 }
 			

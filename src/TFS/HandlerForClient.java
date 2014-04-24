@@ -4,21 +4,40 @@ import java.net.*;
 import java.util.*;
 
 
-
+/**
+ *
+ */
 public class HandlerForClient extends HandleAClient {
 	static int chunkSize = 64;
 
+    /**
+     *
+     * @param socket
+     * @param client
+     * @param out
+     * @param in
+     * @throws UnknownHostException
+     * @throws IOException
+     */
 	public HandlerForClient(Socket socket, TFSClient client, ObjectOutputStream out, ObjectInputStream in) throws UnknownHostException, IOException{		
 		super(socket,client);
 		outputToClient = out;
 		inputFromClient = in;
 	}
 
+    /**
+     *
+     */
 	public void run(){
 		while(true){}
 	}
 
-	//DONE
+    /**
+     *
+     * @param fileName
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void createFile(String fileName) throws IOException, ClassNotFoundException{
 		//Check if File exists
 		if(fileExists(fileName)){
@@ -43,7 +62,12 @@ public class HandlerForClient extends HandleAClient {
 		write_chunks(chunkuuids, b.getBytes());
 	}
 
-	//DONE
+    /**
+     *
+     * @param folderName
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void createDirectory(String folderName) throws IOException, ClassNotFoundException{
 		if(folderExists(folderName)){
 			System.out.println("Error: Directory already exists");
@@ -58,7 +82,12 @@ public class HandlerForClient extends HandleAClient {
 		outputToClient.flush();
 	}
 
-	//DONE
+    /**
+     *
+     * @param folderName
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void deleteDirectory(String folderName) throws IOException, ClassNotFoundException{
 		//Check if folder exists
 		if(!folderExists(folderName)){
@@ -72,7 +101,14 @@ public class HandlerForClient extends HandleAClient {
 		outputToClient.writeObject(o);
 		outputToClient.flush();
 	}
-	
+
+    /**
+     *
+     * @param uuid
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public int getChunkserverToTalk(int uuid) throws IOException, ClassNotFoundException{
 		MyObject o = new MyObject();
 		o.cmd = "getChunkserverToTalk";
@@ -83,7 +119,14 @@ public class HandlerForClient extends HandleAClient {
 		return i;
 	}
 
-	//DONE
+    /**
+     *
+     * @param filename
+     * @param data
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public List<Integer> write(String filename, byte[] data) throws IOException, ClassNotFoundException{
 		//System.out.println(new String(data));
 		int numOfChunks = num_chunks(data.length);
@@ -106,7 +149,13 @@ public class HandlerForClient extends HandleAClient {
 		//write_chunks(chunkuuids,data);
 	}
 
-	//THIS FUNCTION TALKS TO THE CHUNKSERVER
+    /**
+     * Talks to chunkserver
+     * @param chunkuuids
+     * @param data
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void write_chunks(List<Integer> chunkuuids, byte[] data) throws IOException, ClassNotFoundException{
 		List<byte[]> chunks = new ArrayList<byte[]>();
 		int remainingLetters = data.length;
@@ -146,7 +195,11 @@ public class HandlerForClient extends HandleAClient {
 		}
 	}
 
-	//Get the number of chunks
+    /**
+     * Get the number of chunks
+     * @param size
+     * @return
+     */
 	public int num_chunks(int size){
 		if(size == 0)
 			return 0;
@@ -157,7 +210,14 @@ public class HandlerForClient extends HandleAClient {
 		}
 	}
 
-	//DONE
+    /**
+     *
+     * @param filename
+     * @param data
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public List<Integer> write_append(String filename,byte[] data) throws IOException, ClassNotFoundException{
 		if(!fileExists(filename)){
 			System.out.println("Exception!");
@@ -181,7 +241,13 @@ public class HandlerForClient extends HandleAClient {
 		//write_chunks(append_chunkuuids, data);	
 	}
 
-	//DONE
+    /**
+     *
+     * @param filename
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public boolean fileExists(String filename) throws IOException, ClassNotFoundException{
 		//Ask master if file exists
 		MyObject o = new MyObject();
@@ -195,7 +261,13 @@ public class HandlerForClient extends HandleAClient {
 		return (boolean) o.params.get(0);
 	}
 
-	//DONE
+    /**
+     *
+     * @param filename
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public boolean folderExists(String filename) throws IOException, ClassNotFoundException{
 		//Ask master if folder exists
 		MyObject o = new MyObject();
@@ -209,7 +281,13 @@ public class HandlerForClient extends HandleAClient {
 		return (boolean) o.params.get(0);
 	}
 
-	//Get ChunkIDS from master for specific filename
+    /**
+     * Get ChunkIDS from master for specific filename
+     * @param filename
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public List<Integer> getUUIDs(String filename) throws IOException, ClassNotFoundException{
 		if(!fileExists(filename)){
 			System.out.println("Exception!");
@@ -230,7 +308,14 @@ public class HandlerForClient extends HandleAClient {
 		return chunkuuids;
 	}
 
-	//THIS FUNCTION TALKS TO THE CHUNKSERVER
+    /**
+     * Talks to chunserver
+     * @param filename
+     * @param chunkuuids
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public byte[] read(String filename, List<Integer> chunkuuids) throws IOException, ClassNotFoundException{
 
 		List<byte[]> chunks = new ArrayList<byte[]>();
@@ -272,7 +357,12 @@ public class HandlerForClient extends HandleAClient {
 		return data;
 	}
 
-	//DONE
+    /**
+     *
+     * @param filename
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public void delete(String filename) throws IOException, ClassNotFoundException{
 		if(!fileExists(filename)){
 			System.out.println("Delete Error: File does not exist");
@@ -288,7 +378,12 @@ public class HandlerForClient extends HandleAClient {
 	}
 
 
-	//DONE
+    /**
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
 	public byte[] fileToByte (File file) throws IOException{
 
 		byte []buffer = new byte[(int) file.length()];
@@ -309,7 +404,15 @@ public class HandlerForClient extends HandleAClient {
 		return buffer;
 	}
 
-	//THIS FUNCTIONS TALKS TO CHUNKSERVERS
+    /**
+     * Talks to chunkservers
+     * @param offset
+     * @param filename
+     * @param chunkuuids
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public byte[] seekByteSize(int offset, String filename, List<Integer> chunkuuids) throws IOException, ClassNotFoundException{
 		byte[] result=new byte[4];
 		List<byte[]> chunks = new ArrayList<byte[]>();
@@ -343,7 +446,11 @@ public class HandlerForClient extends HandleAClient {
 		return result;
 	}
 
-	//DONE
+    /**
+     *
+     * @param _bytes
+     * @return
+     */
 	public String byteToString(byte[] _bytes)
 	{
 		String file_string = "";
@@ -354,7 +461,13 @@ public class HandlerForClient extends HandleAClient {
 		return file_string;    
 	}
 
-	//Asks the master for all the folders in a directory
+    /**
+     * Asks the master for all the folders in a directory
+     * @param pathname
+     * @return
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
 	public List<String> getFolderInDirectory(String pathname) throws ClassNotFoundException, IOException{
 		//Ask the master
 		MyObject o = new MyObject();
