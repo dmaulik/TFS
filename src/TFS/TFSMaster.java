@@ -158,7 +158,7 @@ public class TFSMaster implements Serializable{
 	}
 
     /**
-     * 
+     *
      * @return
      */
 	public ObjectInputStream getInput(){
