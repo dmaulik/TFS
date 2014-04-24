@@ -13,7 +13,7 @@ import java.util.*;
 
 public class TFSClient implements Serializable{
 
-	public static final int noOfChunkservers = 1;
+	public static final int noOfChunkservers = 3;
 
 	ServerSocket mysocket; // Socket for Master
 	ObjectOutputStream out;	//Output stream
@@ -44,7 +44,6 @@ public class TFSClient implements Serializable{
 			while(clients< 1+noOfChunkservers){
 
 				Socket serversocket;
-				System.out.println(clients);
 				if(clients == 0)
 					serversocket = new Socket("localhost", 7500);//connection to Master
 				else
@@ -91,7 +90,7 @@ public class TFSClient implements Serializable{
 					masterHandler.deleteDirectory("1\\2");
 				}
 				else if(command == 4){
-					int replicas = 1;
+					int replicas = 2;
 					if(replicas <= 0 || replicas>noOfChunkservers){
 						System.out.println("ERROR!!");
 						break;
@@ -111,7 +110,27 @@ public class TFSClient implements Serializable{
 					String destination = "src\\test";
 					
 					System.out.println("Reading from " + filename + " and writing to " + destination); // Writing to Local
-					storeTFSFile(filename, destination);
+					
+					boolean done = true;
+					try{
+						storeTFSFile(filename, destination);
+						System.out.println("Writing Successful!");
+					}catch(Exception e){
+						done = false;
+						System.out.println("Failed to connect to chunkserver. Trying to get copies");
+					}
+					
+					for(int i = 0; i<noOfChunkservers-1; i++){
+						if(done == false){
+							try{
+								storeTFSFile(filename +"copy"+i , destination);
+								System.out.println("Got the copy. Writing Successful!");
+								done = true;
+							}catch(Exception e){
+								System.out.println("Failed");
+							}
+						}
+					}
 				}
 				else if(command == 6){
 					String locfile = "src\\img.png";
