@@ -30,7 +30,7 @@ public class TFSMaster implements Serializable{
 	BufferedReader br;
 	ServerSocket serverSocket;
 	ClientHandlerForMaster csHandler;
-	
+	int numOfClients = 0;
 	
 	MyObject obj;
 	//array of clients
@@ -126,7 +126,8 @@ public class TFSMaster implements Serializable{
         try{				
         	while(true){
         		Socket socket = serverSocket.accept();
-				Socket clientsocket = new Socket("localhost", 7499);
+				Socket clientsocket = new Socket("localhost", 7499-numOfClients);
+				numOfClients++;
 				System.out.println("Got client");
 				
 				//create an input stream and an output stream from the socket

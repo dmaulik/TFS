@@ -31,7 +31,6 @@ public class TFSChunkserver implements Serializable
 	protected String root;
 	protected String local_filesystem_root;
 	
-	
 	Socket serversocket;	//Socket to Client
 	ServerSocket mysocket;	//My socket
 	static ObjectOutputStream out;
@@ -67,11 +66,13 @@ public class TFSChunkserver implements Serializable
 			System.exit(0);
 		}
 		
+		int clients = 0;
 		try{
 		while(true){
 			try{
 				Socket socket = mysocket.accept();
-				serversocket = new Socket("localhost", 7499);	//ClientSocket
+				serversocket = new Socket("localhost", 7499-clients);	//ClientSocket
+				clients++;
 				//System.out.println("Got Client");
 				out = new ObjectOutputStream(serversocket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
