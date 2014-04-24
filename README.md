@@ -1,6 +1,16 @@
 TFS
 ===
 
+HOW TO TEST RIGHT NOW:
+1.)Run TFSMaster.java
+2.)Go to line 62 on TFSChunkserver.java
+3.)Change the Port# into 7501, then run it
+4.)Change the Port# into 7502, then run it
+5.)Change the Port# into 7503, then run it
+6.)Run TFSClient.java
+7.)Enter the test #: 1,2,3,1,4,5,6,6,7
+
+
 Tiny File System Project
 
 Programming language : java
