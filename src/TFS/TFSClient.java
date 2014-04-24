@@ -354,9 +354,17 @@ public class TFSClient implements Serializable{
 		//System.out.println(z);
 		
 		if(!masterHandler.fileExists(filename)){
+			int replicas = 3;
 			List<Integer> uuids = masterHandler.write(filename, combined);
 			int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
 			chunkserverHandlers.get(cs).write_chunks(uuids, combined );
+			
+			for(int i=0; i<replicas-1; i++){
+				//Write 2 more replicas
+				List<Integer> uuids2 = masterHandler.write(filename +"copy"+i, combined);
+				int cs2 = masterHandler.getChunkserverToTalk(uuids2.get(0));
+				chunkserverHandlers.get(cs2).write_chunks(uuids2, combined );
+			}
 		}
 		else{
 			List<Integer> uuids = masterHandler.write_append(filename, combined);
