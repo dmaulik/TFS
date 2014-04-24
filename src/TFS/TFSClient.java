@@ -44,6 +44,7 @@ public class TFSClient implements Serializable{
 			while(clients< 1+noOfChunkservers){
 
 				Socket serversocket;
+				System.out.println(clients);
 				if(clients == 0)
 					serversocket = new Socket("localhost", 7500);//connection to Master
 				else

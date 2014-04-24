@@ -32,6 +32,7 @@ public class TFSChunkserver implements Serializable
 	static ObjectOutputStream out;
 	static ObjectInputStream in;
 	ClientHandlerForChunkserver csHandler;	//Connection handler to client
+	int versionNumber = 0; //Version number of the chunkserver
 	
 	public static void main(String[] args){
 		new TFSChunkserver("0");
