@@ -139,14 +139,32 @@ public class TFSClient implements Serializable{
 				  	append(locfile,tfspath);
 
 				  	List<Integer> uuids = masterHandler.getUUIDs(tfspath);
-				  	System.out.println(uuids);
+				  	//System.out.println(uuids);
 				  	int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
 					String s = new String(chunkserverHandlers.get(cs).read(tfspath,uuids));
 				    System.out.println("Content : " + s);
 				}
 				else if(command == 7){
 					String filename = "1\\2\\5\\File3";
-					countFile(filename);	
+					boolean done = false;
+					try{
+						countFile(filename);
+						done = true;
+					}catch (Exception e){
+						System.out.println("Fail to connect to chunkserver. Trying to get replicas");
+					}
+					
+					for(int i = 0; i<noOfChunkservers-1; i++){
+						if(done == false){
+							try{
+								countFile(filename +"copy"+i);
+								done = true;
+							}catch(Exception e){
+								System.out.println("Failed");
+							}
+						}
+					}	
+					
 				}
 				else if(command == 8){
 					//Do it later
