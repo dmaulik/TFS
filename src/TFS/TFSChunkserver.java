@@ -2,6 +2,7 @@ package TFS;
 
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,6 +28,7 @@ public class TFSChunkserver implements Serializable
 	protected String root;
 	protected String local_filesystem_root;
 	
+	
 	Socket serversocket;	//Socket to Client
 	ServerSocket mysocket;	//My socket
 	static ObjectOutputStream out;
@@ -41,6 +43,7 @@ public class TFSChunkserver implements Serializable
 	TFSChunkserver(String chunkloc){
 		this.chunkLocation = chunkloc;
 		this.chunkTable = new HashMap<Integer, byte[]>();
+
 		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
 		//createFolder(this.local_filesystem_root);

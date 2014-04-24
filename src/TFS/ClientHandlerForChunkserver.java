@@ -2,16 +2,30 @@ package TFS;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.Semaphore;
 
 
 
 public class ClientHandlerForChunkserver extends HandleAClient {
-
-
+	List<request> requests; 
 	public ClientHandlerForChunkserver(Socket socket, TFSChunkserver chunkserver) throws UnknownHostException, IOException{		
 		super(socket,chunkserver);
+		requests = new ArrayList<request>();
 	}
-
+	class request{
+		int id;
+		byte[] array;
+		public request(int a, byte[] b){
+			id = a;
+			array = b;
+		}
+		public int getId() {
+			return id;
+		}
+		public byte[] getArray() {
+			return array;
+		}
+	}
 
 	public void run(){
 		while(true){
@@ -86,15 +100,22 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 	
 	public void write (int chunkuuid, byte[] chunk) throws IOException
 	{
-		String local_filename = getFileName(chunkuuid);
-		File file = new File(local_filename);
+		requests.add(new request(chunkuuid,chunk));
+		while(requests.size()!=0){
+			int id = requests.get(0).getId();
+			byte[] b = requests.get(0).getArray();
+			String local_filename = getFileName(id);
+			File file = new File(local_filename);
 		
-		FileOutputStream fos = new FileOutputStream(file);
-		fos.write(chunk);
-		chunkserver.chunkTable.put(chunkuuid, local_filename.getBytes());
-		fos.flush();
-		fos.close();
-		chunkserver.versionNumber++;
+			FileOutputStream fos = new FileOutputStream(file);
+		
+			fos.write(b);
+			chunkserver.chunkTable.put(id, local_filename.getBytes());
+			fos.flush();
+			fos.close();
+			chunkserver.versionNumber++;
+			requests.remove(0);
+		}
 	}
 
 	public byte[] read (int chunkID) throws IOException
