@@ -13,7 +13,7 @@ import java.util.*;
 
 public class TFSClient implements Serializable{
 
-	public static final int noOfChunkservers = 1;
+	public static final int noOfChunkservers = 3;
 
 	ServerSocket mysocket; // Socket for Master
 	ObjectOutputStream out;	//Output stream
@@ -44,7 +44,6 @@ public class TFSClient implements Serializable{
 			while(clients< 1+noOfChunkservers){
 
 				Socket serversocket;
-				System.out.println(clients);
 				if(clients == 0)
 					serversocket = new Socket("localhost", 7500);//connection to Master
 				else
@@ -81,7 +80,8 @@ public class TFSClient implements Serializable{
 				command = scan.nextInt();
 				
 				if(command == 1){
-					makeDirs("", 1,7);
+					test1(7,3);
+					//makeDirs("", 1,7);
 				}
 				else if(command == 2){
 					createFiles("1\\2",5);
@@ -90,8 +90,16 @@ public class TFSClient implements Serializable{
 					masterHandler.deleteDirectory("1\\2");
 				}
 				else if(command == 4){
+					int replicas = 2;
+					if(replicas <= 0 || replicas>noOfChunkservers){
+						System.out.println("ERROR!!");
+						break;
+					}
 					storeLocalFile("src\\test123.txt", "1\\2\\5\\File5");
-
+					for(int i=0; i<replicas-1; i++){
+						storeLocalFile("src\\test123.txt", "1\\2\\5\\File5" + "copy" + i);
+					}
+					
 					List<Integer> uuids = masterHandler.getUUIDs("1\\2\\5\\File5");
 					int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
 					String s = new String(chunkserverHandlers.get(cs).read("1\\2\\5\\File5",uuids));
@@ -102,7 +110,27 @@ public class TFSClient implements Serializable{
 					String destination = "src\\test";
 					
 					System.out.println("Reading from " + filename + " and writing to " + destination); // Writing to Local
-					storeTFSFile(filename, destination);
+					
+					boolean done = true;
+					try{
+						storeTFSFile(filename, destination);
+						System.out.println("Writing Successful!");
+					}catch(Exception e){
+						done = false;
+						System.out.println("Failed to connect to chunkserver. Trying to get copies");
+					}
+					
+					for(int i = 0; i<noOfChunkservers-1; i++){
+						if(done == false){
+							try{
+								storeTFSFile(filename +"copy"+i , destination);
+								System.out.println("Got the copy. Writing Successful!");
+								done = true;
+							}catch(Exception e){
+								System.out.println("Failed");
+							}
+						}
+					}
 				}
 				else if(command == 6){
 					String locfile = "src\\img.png";
@@ -133,6 +161,36 @@ public class TFSClient implements Serializable{
 	
 	
 	//TEST #1
+	public void test1(int n, int fanout) throws ClassNotFoundException, IOException{
+		if(fanout == 0){
+			String pD;
+			for(int i=1; i <= n; i++){
+				pD = "" +i;
+				masterHandler.createDirectory(pD);
+			}
+		}
+		else{
+			String pD = "1";
+			String temp = "";
+			int count = 1;
+			
+			masterHandler.createDirectory(pD);
+			while(count < n){
+				for(int i=0; i<fanout; i++){
+					count++;
+					if(i == 0)
+						temp = Integer.toString(count);
+					masterHandler.createDirectory(pD + "\\" + count);
+					if(i==fanout-1)
+						pD = pD + "\\" + temp;
+					if(count == n)
+						break;
+				}
+			}
+		}
+	}
+	
+	//TEST #1 - No longer used
 	public void makeDirs(String parentDir, int i, int n) throws IOException, ClassNotFoundException{
 		if(i > n)
 			return;

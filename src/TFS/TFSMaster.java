@@ -20,7 +20,7 @@ import java.awt.event.*;
 
 public class TFSMaster implements Serializable{
 	
-	public static final int numOfChunkservers = 1;
+	public static final int numOfChunkservers = 3;
 	
 	ObjectOutputStream outputToClient;
 	ObjectInputStream inputFromClient;
