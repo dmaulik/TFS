@@ -4,6 +4,7 @@ import java.net.*;
 import java.util.*;
 
 
+
 /**
  *
  */
@@ -219,6 +220,8 @@ public class ClientHandlerForMaster extends HandleAClient {
 			int chunkuuid = server.counter.nextValue();
 			int chunkloc = server.chunkRobin;
 			server.chunkTable.put (chunkuuid, chunkloc);
+			locks temp= new locks();
+			server.lockTable.put(chunkuuid, temp);
 			chunkuuids.add(chunkuuid);
 			s += chunkuuid + "," + chunkloc + "\r\n";
 			fw.flush();

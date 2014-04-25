@@ -50,21 +50,6 @@ public class TFSMaster implements Serializable{
     Map<Integer, locks> lockTable;
     Map<String, Integer> folderTable; // Map foldername to chunkloc id
     List<String> folderList;
-    public class locks{
-		//int chunkuuid;
-		Semaphore read;
-		Semaphore write;
-		public locks(){
-			read = new Semaphore(1);
-			write = new Semaphore(1);
-		}
-		public Semaphore getRead() {
-			return read;
-		}
-		public Semaphore getWrite() {
-			return write;
-		}
-	}
     
     
     /**
