@@ -47,7 +47,6 @@ public class TFSMaster implements Serializable{
     Map<Integer, Integer> chunkserverTable; // Map chunkloc id to chunkserver PORT#
     Map<String, List<Integer>> fileTable; // Map filename to chunk ids
     Map<Integer, Integer> chunkTable; // Map chunk id to chunkloc id
-    Map<Integer, locks> lockTable;
     Map<String, Integer> folderTable; // Map foldername to chunkloc id
     List<String> folderList;
     

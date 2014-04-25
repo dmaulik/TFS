@@ -28,7 +28,7 @@ public class TFSChunkserver implements Serializable
 {
 	protected String chunkLocation;
 	protected Map<Integer, byte[]> chunkTable; //chunkID to fileName
-	//protected Map<Integer, locks> lockTable;
+	protected Map<Integer, locks> lockTable;
 	protected String root;
 	protected String local_filesystem_root;
 	
@@ -55,12 +55,12 @@ public class TFSChunkserver implements Serializable
 	TFSChunkserver(String chunkloc){
 		this.chunkLocation = chunkloc;
 		this.chunkTable = new HashMap<Integer, byte[]>();
-
+		this.lockTable = new HashMap<Integer, locks>();
 		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
 		//createFolder(this.local_filesystem_root);
 		try{
-			mysocket = new ServerSocket(7501); 
+			mysocket = new ServerSocket(7503); 
 			System.out.println("Chunkserver started");
 		} 
 		catch(Exception ex){ 

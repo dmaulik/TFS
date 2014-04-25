@@ -144,27 +144,34 @@ public class ClientHandlerForChunkserver extends HandleAClient {
      * @param chunkuuid     The uuid of the chunk
      * @param chunk         The chunk
      * @throws IOException  Something
+     * @throws InterruptedException 
      */
-	public void write (int chunkuuid, byte[] chunk) throws IOException
+	public void write (int chunkuuid, byte[] chunk) throws IOException, InterruptedException
 	{
-		requests.add(new request(chunkuuid,chunk));
-		while(requests.size()!=0){
-			int id = requests.get(0).getId();
-			byte[] b = requests.get(0).getArray();
-			String local_filename = getFileName(id);
-			File file = new File(local_filename);
-		
-			FileOutputStream fos = new FileOutputStream(file);
-		
-			fos.write(b);
-			chunkserver.chunkTable.put(id, local_filename.getBytes());
-			fos.flush();
-			fos.close();
-			chunkserver.versionNumber++;
-			requests.remove(0);
+		if(chunkserver.lockTable.get(chunkuuid)==null){
+			chunkserver.lockTable.put(chunkuuid, new locks());
+			System.out.println("lock "+ chunkuuid+" created");
 		}
+		chunkserver.lockTable.get(chunkuuid).write.acquire();
+		System.out.println("lock "+chunkuuid+ " acquired");
+		String local_filename = getFileName(chunkuuid);
+		System.out.println(local_filename);
+		File file = new File(local_filename);
+		
+		FileOutputStream fos = new FileOutputStream(file);
+		
+		fos.write(chunk);
+		
+		chunkserver.chunkTable.put(chunkuuid, local_filename.getBytes());
+		fos.flush();
+		fos.close();
+		chunkserver.versionNumber++;
+		
+		chunkserver.lockTable.get(chunkuuid).write.release();
+		System.out.println("lock "+chunkuuid+ " released");
 	}
 
+	
     /**
      *
      * @param chunkID       Id of the chunk
@@ -173,8 +180,10 @@ public class ClientHandlerForChunkserver extends HandleAClient {
      */
 	public byte[] read (int chunkID) throws IOException
 	{
+		//System.out.println(chunkID);
 		byte[] data = null;
 		String localFilename = getFileName(chunkID);
+		//System.out.println(localFilename);
 		data = fileToByte(new File(localFilename));
 		return data;
 	}

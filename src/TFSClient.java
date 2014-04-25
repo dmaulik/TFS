@@ -149,7 +149,7 @@ public class TFSClient implements Serializable{
 				  	append(locfile,tfspath);
 
 				  	List<Integer> uuids = masterHandler.getUUIDs(tfspath);
-				  	//System.out.println(uuids);
+				  	System.out.println("uuids "+uuids);
 				  	int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
 					String s = new String(chunkserverHandlers.get(cs).read(tfspath,uuids));
 				    System.out.println("Content : " + s);
