@@ -2,6 +2,7 @@
 
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
+
 
 /**
  *
@@ -45,10 +47,26 @@ public class TFSMaster implements Serializable{
     Map<Integer, Integer> chunkserverTable; // Map chunkloc id to chunkserver PORT#
     Map<String, List<Integer>> fileTable; // Map filename to chunk ids
     Map<Integer, Integer> chunkTable; // Map chunk id to chunkloc id
-    
+    Map<Integer, locks> lockTable;
     Map<String, Integer> folderTable; // Map foldername to chunkloc id
     List<String> folderList;
-
+    public class locks{
+		//int chunkuuid;
+		Semaphore read;
+		Semaphore write;
+		public locks(){
+			read = new Semaphore(1);
+			write = new Semaphore(1);
+		}
+		public Semaphore getRead() {
+			return read;
+		}
+		public Semaphore getWrite() {
+			return write;
+		}
+	}
+    
+    
     /**
      *
      * @param args

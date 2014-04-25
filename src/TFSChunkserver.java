@@ -28,7 +28,7 @@ public class TFSChunkserver implements Serializable
 {
 	protected String chunkLocation;
 	protected Map<Integer, byte[]> chunkTable; //chunkID to fileName
-	protected Map<Integer, locks> lockTable;
+	//protected Map<Integer, locks> lockTable;
 	protected String root;
 	protected String local_filesystem_root;
 	
@@ -38,7 +38,7 @@ public class TFSChunkserver implements Serializable
 	static ObjectInputStream in;
 	ClientHandlerForChunkserver csHandler;	//Connection handler to client
 	int versionNumber = 0; //Version number of the chunkserver
-	public class locks{
+	/*public class locks{
 		//int chunkuuid;
 		Semaphore read;
 		Semaphore write;
@@ -52,8 +52,7 @@ public class TFSChunkserver implements Serializable
 		public Semaphore getWrite() {
 			return write;
 		}
-	}
-	
+	}*/
 	
     /**
      *
