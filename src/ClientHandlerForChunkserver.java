@@ -148,27 +148,33 @@ public class ClientHandlerForChunkserver extends HandleAClient {
      */
 	public void write (int chunkuuid, byte[] chunk) throws IOException, InterruptedException
 	{
-		if(chunkserver.lockTable.get(chunkuuid)==null){
-			chunkserver.lockTable.put(chunkuuid, new locks());
-			System.out.println("lock "+ chunkuuid+" created");
+		requests.add(new request(chunkuuid,chunk));
+		while(requests.size()!=0){
+			int id = requests.get(0).id;
+			byte[] b = requests.get(0).getArray();
+			if(chunkserver.lockTable.get(id)==null){
+				chunkserver.lockTable.put(id, new locks());
+				System.out.println("lock "+ id+" created");
+			}
+			chunkserver.lockTable.get(id).write.acquire();
+			System.out.println("lock "+id+ " acquired");
+			String local_filename = getFileName(id);
+			System.out.println(local_filename);
+			File file = new File(local_filename);
+		
+			FileOutputStream fos = new FileOutputStream(file);
+		
+			fos.write(b);
+		
+			chunkserver.chunkTable.put(id, local_filename.getBytes());
+			fos.flush();
+			fos.close();
+			chunkserver.versionNumber++;
+		
+			chunkserver.lockTable.get(id).write.release();
+			System.out.println("lock "+id+ " released");
+			requests.remove(0);
 		}
-		chunkserver.lockTable.get(chunkuuid).write.acquire();
-		System.out.println("lock "+chunkuuid+ " acquired");
-		String local_filename = getFileName(chunkuuid);
-		System.out.println(local_filename);
-		File file = new File(local_filename);
-		
-		FileOutputStream fos = new FileOutputStream(file);
-		
-		fos.write(chunk);
-		
-		chunkserver.chunkTable.put(chunkuuid, local_filename.getBytes());
-		fos.flush();
-		fos.close();
-		chunkserver.versionNumber++;
-		
-		chunkserver.lockTable.get(chunkuuid).write.release();
-		System.out.println("lock "+chunkuuid+ " released");
 	}
 
 	

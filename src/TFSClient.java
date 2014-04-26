@@ -43,7 +43,7 @@ public class TFSClient implements Serializable{
      */
 	TFSClient(){
 		try{
-			mysocket = new ServerSocket(7499);
+			mysocket = new ServerSocket(7498);
 		} 
 		catch(Exception ex){ 
 			ex.printStackTrace();
