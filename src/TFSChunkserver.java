@@ -69,7 +69,7 @@ public class TFSChunkserver implements Serializable
 				if(clients == 0)//CLIENT 1
 					serversocket = new Socket("68.181.174.53", 7499-clients);
 				else	//CLIENT 2
-					serversocket = new Socket("68.181.174.156", 7499-clients);
+					serversocket = new Socket("68.181.174.43", 7499-clients);
 				clients++;
 				System.out.println("Got Client");
 				out = new ObjectOutputStream(serversocket.getOutputStream());

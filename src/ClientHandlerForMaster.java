@@ -390,7 +390,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 		FileWriter fw0 = new FileWriter("chconfig.csv", true);
 		String s0 = "";
 		for(int i=0 ; i<uuids.size(); i++){
-			int chunkLoc = server.chunkTable.get(uuids.get(i));
+			int chunkLoc = server.chunkTable.get(uuids.get(0));
 			
 			//TODO FIX THIS TO MULTIPLE CHUNKSERVER
 			//TFSChunkserver cs = server.chunkserverTable.get(chunkLoc);
@@ -401,10 +401,10 @@ public class ClientHandlerForMaster extends HandleAClient {
 				cssocket = new Socket("68.181.174.130", 7501);
 			}
 			else if (chunkLoc == 1){
-				cssocket = new Socket("68.181.174.156", 7502);
+				cssocket = new Socket("68.181.174.86", 7502);
 			}
 			else{
-				cssocket = new Socket("68.181.174.86", 7503);
+				cssocket = new Socket("68.181.174.43", 7503);
 			}
 			
 			
