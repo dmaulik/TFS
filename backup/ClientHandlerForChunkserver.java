@@ -10,7 +10,7 @@ import java.util.concurrent.Semaphore;
  */
 public class ClientHandlerForChunkserver extends HandleAClient {
 	List<request> requests;
-	List<request> readRequests;
+
     /**
      *
      * @param socket                The socket it is connecting to
@@ -21,7 +21,6 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 	public ClientHandlerForChunkserver(Socket socket, TFSChunkserver chunkserver) throws UnknownHostException, IOException{		
 		super(socket,chunkserver);
 		requests = new ArrayList<request>();
-		readRequests = new ArrayList<request>();
 	}
 
     /**
@@ -79,14 +78,8 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 					this.write((int)obj.params.get(0), (byte[]) obj.params.get(1));
 				}
 				else if (obj.cmd.equals("read")){
-					
 					//Reading the chunks
 					int chunkID = (int) obj.params.get(0);
-					if(chunkserver.lockTable.get(chunkID)==null){
-						locks temp = new locks();
-						chunkserver.lockTable.put(chunkID, temp);
-					}
-					chunkserver.lockTable.get(chunkID).write.acquire();
 					byte[] by = this.read(chunkID);
 					
 					//Reply to client
@@ -94,8 +87,6 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 					obj.params.add(by);
 					outputToClient.writeObject(obj);
 					outputToClient.flush();
-					chunkserver.lockTable.get(chunkID).write.release();
-					
 				}
 				else if (obj.cmd.equals("removeChunk")){
 					//Remove chunks from chunkserver

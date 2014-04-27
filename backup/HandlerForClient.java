@@ -59,7 +59,7 @@ public class HandlerForClient extends HandleAClient {
 
 		List<Integer> chunkuuids = (List<Integer>) o.params.get(0);
 		String b = "";
-		//write_chunks(chunkuuids, b.getBytes());
+		write_chunks(chunkuuids, b.getBytes());
 	}
 
     /**

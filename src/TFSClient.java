@@ -43,7 +43,7 @@ public class TFSClient implements Serializable{
      */
 	TFSClient(){
 		try{
-			mysocket = new ServerSocket(7498);
+			mysocket = new ServerSocket(7499);
 		} 
 		catch(Exception ex){ 
 			ex.printStackTrace();
@@ -268,7 +268,10 @@ public class TFSClient implements Serializable{
 		
 		for(int i =1; i < n+1; i++){
 			File a = new File(pathName + "\\" + "File" + i);
-			masterHandler.createFile(pathName + "\\" + "File" + i);	
+			masterHandler.createFile(pathName + "\\" + "File" + i);
+			List<Integer> ids = masterHandler.getUUIDs(pathName + "\\" + "File" + i);
+			int cs = masterHandler.getChunkserverToTalk(ids.get(0));
+			chunkserverHandlers.get(0).write_chunks(ids, "".getBytes());
 		}
 		List <String> s = masterHandler.getFolderInDirectory(pathName);
 		
