@@ -55,7 +55,6 @@ public class TFSClient implements Serializable{
 					serversocket = new Socket("68.181.174.156", 7502); //connection to Chunkserver 2
 				else if (clients == 3)//CHUNKSERVER 3
 					serversocket = new Socket("68.181.174.43", 7503); //connection to Chunkserver 3
-				clients++;
 				Socket socket = mysocket.accept();	//Accept connection
 				out = new ObjectOutputStream(serversocket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
@@ -64,18 +63,20 @@ public class TFSClient implements Serializable{
 					if(clients == 0){
 						masterHandler = new HandlerForClient(socket, this, out, in);
 						System.out.println("Created masterHandler");
+						clients++;
 					}
 					else{
 						HandlerForClient chunkserverHandler = new HandlerForClient(socket,this, out, in);
 						chunkserverHandlers.add(chunkserverHandler);
 						System.out.println("Created chunkServerHandler");
+						clients++;
 					}
 					//new Thread(masterHandler).start();
 				}
 				catch(Exception ex){
 					ex.printStackTrace();
 				}
-				clients++;
+				
 			}
 
 			Scanner scan = new Scanner(System.in);
