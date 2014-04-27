@@ -260,8 +260,9 @@ public class TFSClient implements Serializable{
 	public void createFiles(String pathName, int n) throws IOException, ClassNotFoundException{
 		if(!masterHandler.folderExists(pathName)){
 			System.out.println("Folder doesn't exist");
-			System.out.println("Terminating..");
-			System.exit(0);
+			//System.out.println("Terminating..");
+			//System.exit(0);
+			return;
 		}
 		
 		for(int i =1; i < n+1; i++){
@@ -298,14 +299,16 @@ public class TFSClient implements Serializable{
 		File f = new File(lpath);
 		if(!f.exists()){
 			System.out.println("Error: Source file does not exist");
-			System.out.println("Terminating..");
-			System.exit(0);
+			//System.out.println("Terminating..");
+			//System.exit(0);
+			return;
 		}
 		
 		if(masterHandler.fileExists(filename)){
 			System.out.println("Error: Destination file already exists");
-			System.out.println("Terminating..");
-			System.exit(0);
+			//System.out.println("Terminating..");
+			//System.exit(0);
+			return;
 		}
 		
 		String []s = filename.split("\\\\");
@@ -320,8 +323,9 @@ public class TFSClient implements Serializable{
 			}
 			if(!masterHandler.folderExists(folderName)){
 				System.out.println("Error: Folder doesn't exist");
-				System.out.println("Terminating..");
-				System.exit(0);
+				//System.out.println("Terminating..");
+				//System.exit(0);
+				return;
 			}
 		}
 		
@@ -353,8 +357,9 @@ public class TFSClient implements Serializable{
 			file.createNewFile();
 		}catch (Exception e){
 			System.out.println("Error: Can't find directory");
-			System.out.println("Terminating..");
-			System.exit(0);
+			//System.out.println("Terminating..");
+			//System.exit(0);
+			return;
 		}
 		
 		FileOutputStream fos = new FileOutputStream(file);
@@ -377,8 +382,9 @@ public class TFSClient implements Serializable{
 		File f = new File(lpath);
 		if(!f.exists()){
 			System.out.println("Error: Source file does not exist");
-			System.out.println("Terminating..");
-			System.exit(0);
+			//System.out.println("Terminating..");
+			//System.exit(0);
+			return;
 		}
 		
 		String []s = filename.split("\\\\");
@@ -393,8 +399,9 @@ public class TFSClient implements Serializable{
 			}
 			if(!masterHandler.folderExists(folderName)){
 				System.out.println("Error: Folder doesn't exist");
-				System.out.println("Terminating..");
-				System.exit(0);
+				//System.out.println("Terminating..");
+				//System.exit(0);
+				return;
 			}
 		}
 		byte[] b = masterHandler.fileToByte(f);
@@ -465,8 +472,9 @@ public class TFSClient implements Serializable{
     	if (!masterHandler.fileExists(filename))
     	{
     		System.out.println("Error: Input TFS file does not exists");
-    		System.out.println("Terminating..");
-    		System.exit(0);
+    		//System.out.println("Terminating..");
+    		//System.exit(0);
+    		return;
     	}
     	//count the number of logical files stored in a TFS file
     	//read the size and payload pairs in the specified file name
