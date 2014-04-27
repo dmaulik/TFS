@@ -119,6 +119,7 @@ public class TFSMaster implements Serializable{
         
         //Start the server
         try{
+        	InetAddress addr = InetAddress.getByName("68.181.174.42");
 			serverSocket = new ServerSocket(7500);
 			System.out.println("Server started");
 		} 
@@ -128,11 +129,16 @@ public class TFSMaster implements Serializable{
 		}
         
         //Wait for Clients
-        
+        int client = 0;
         try{				
         	while(true){
         		Socket socket = serverSocket.accept();
-				Socket clientsocket = new Socket("localhost", 7499-numOfClients);
+        		Socket clientsocket;
+        		if(client == 0)	//CLIENT1
+        			clientsocket = new Socket("68.181.174.53", 7499-numOfClients);
+        		else	//CLIENT2
+        			clientsocket = new Socket("68.181.174.86", 7499-numOfClients);
+        		client++;
 				numOfClients++;
 				System.out.println("Got client");
 				

@@ -39,20 +39,12 @@ public class TFSChunkserver implements Serializable
 	ClientHandlerForChunkserver csHandler;	//Connection handler to client
 	int versionNumber = 0; //Version number of the chunkserver
 
-	
-    /**
-     *
-     * @param args
-     */
-	public static void main(String[] args){
-		new TFSChunkserver("0");
-	}
 
     /**
      *
      * @param chunkloc
      */
-	TFSChunkserver(String chunkloc){
+	TFSChunkserver(String chunkloc, int portNumber, String host){
 		this.chunkLocation = chunkloc;
 		this.chunkTable = new HashMap<Integer, byte[]>();
 		this.lockTable = new HashMap<Integer, locks>();
@@ -60,7 +52,8 @@ public class TFSChunkserver implements Serializable
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
 		//createFolder(this.local_filesystem_root);
 		try{
-			mysocket = new ServerSocket(7503); 
+			InetAddress addr = InetAddress.getByName(host);
+			mysocket = new ServerSocket(portNumber, 50, addr); 
 			System.out.println("Chunkserver started");
 		} 
 		catch(Exception ex){ 
@@ -73,7 +66,10 @@ public class TFSChunkserver implements Serializable
 		while(true){
 			try{
 				Socket socket = mysocket.accept();
-				serversocket = new Socket("localhost", 7499-clients);	//ClientSocket
+				if(clients == 0)//CLIENT 1
+					serversocket = new Socket("68.181.174.53", 7499-clients);
+				else	//CLIENT 2
+					serversocket = new Socket("68.181.174.86", 7499-clients);
 				clients++;
 				//System.out.println("Got Client");
 				out = new ObjectOutputStream(serversocket.getOutputStream());
