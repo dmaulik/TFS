@@ -421,6 +421,7 @@ public class TFSClient implements Serializable{
 			int replicas = 3;
 			List<Integer> uuids = masterHandler.write(filename, combined);
 			int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
+			System.out.println(uuids +"in append not exist");
 			chunkserverHandlers.get(cs).write_chunks(uuids, combined );
 			
 			for(int i=0; i<replicas-1; i++){
@@ -432,6 +433,7 @@ public class TFSClient implements Serializable{
 		}
 		else{
 			List<Integer> uuids = masterHandler.write_append(filename, combined);
+			System.out.println(uuids +"in append exist");
 			int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
 			chunkserverHandlers.get(cs).write_chunks(uuids, combined);
 			

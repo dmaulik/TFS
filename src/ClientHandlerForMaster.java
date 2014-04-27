@@ -140,20 +140,22 @@ public class ClientHandlerForMaster extends HandleAClient {
      *
      * @param folderName
      * @throws IOException
+     * @throws InterruptedException 
      */
-	protected void allocateFolder(String folderName) throws IOException{
+	protected void allocateFolder(String folderName) throws IOException, InterruptedException{
 		int serverloc = server.chunkRobin;
 		server.chunkRobin = (server.chunkRobin +1)%server.numOfChunkservers;
 		server.folderList.add(folderName);    	
 		server.folderTable.put(folderName, serverloc);
 		System.out.println(folderName + " is created");
-
+		server.dirLock.acquire();
 		FileWriter fw = new FileWriter("dirconfig.csv", true);
 
 		String s = folderName + "," + serverloc + "\r\n";
 		fw.append(s);
 		fw.flush();
 		fw.close();
+		server.dirLock.release();
 	}
 
     /**
@@ -162,8 +164,10 @@ public class ClientHandlerForMaster extends HandleAClient {
      * @param numChunks
      * @return
      * @throws IOException
+     * @throws InterruptedException 
      */
-	protected List allocate(String filename, int numChunks) throws IOException{
+	protected List allocate(String filename, int numChunks) throws IOException, InterruptedException{
+		server.conLock.acquire();
 		FileWriter fw = new FileWriter("config.csv", true);
 		List<Integer> chunkuuids = allocateChunks(numChunks);
 		server.fileTable.put (filename, chunkuuids);
@@ -176,6 +180,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 		fw.append(s);
 		fw.flush();
 		fw.close();
+		server.conLock.release();
 		return chunkuuids;
 	}
 
@@ -185,9 +190,11 @@ public class ClientHandlerForMaster extends HandleAClient {
      * @param chunkloc
      * @return
      * @throws IOException
+     * @throws InterruptedException 
      */
-	protected List allocateChunksAppend(int numChunks, int chunkloc) throws IOException{
+	protected List allocateChunksAppend(int numChunks, int chunkloc) throws IOException, InterruptedException{
 		List<Integer> chunkuuids = new ArrayList<Integer>();
+		server.chLock.acquire();
 		FileWriter fw = new FileWriter("chconfig.csv", true);
 		String s = "";
 		for(int i = 0; i < numChunks; i++){
@@ -202,7 +209,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 		fw.append(s);
 		fw.flush();
 		fw.close();
-
+		server.chLock.release();
 		return chunkuuids;
 	}
 
@@ -211,9 +218,11 @@ public class ClientHandlerForMaster extends HandleAClient {
      * @param numChunks
      * @return
      * @throws IOException
+     * @throws InterruptedException 
      */
-	protected List allocateChunks(int numChunks) throws IOException{
+	protected List allocateChunks(int numChunks) throws IOException, InterruptedException{
 		List<Integer> chunkuuids = new ArrayList<Integer>();
+		server.chLock.acquire();
 		FileWriter fw = new FileWriter("chconfig.csv", true);
 		String s = "";
 		for(int i = 0; i < numChunks; i++){
@@ -228,7 +237,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 		fw.append(s);
 		fw.flush();
 		fw.close();
-
+		server.chLock.release();
 		return chunkuuids;
 	}
 
@@ -238,8 +247,9 @@ public class ClientHandlerForMaster extends HandleAClient {
      * @param numChunks
      * @return
      * @throws IOException
+     * @throws InterruptedException 
      */
-	protected List alloc_append(String filename, int numChunks) throws IOException{
+	protected List alloc_append(String filename, int numChunks) throws IOException, InterruptedException{
 		List<Integer> uuids = server.fileTable.get(filename);
 		int chunkloc = server.chunkTable.get(uuids.get(0));
 		List<Integer> append_uuids = allocateChunksAppend(numChunks,chunkloc);
@@ -250,6 +260,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 		server.fileTable.put(filename, uuids);
 
 		//Rewrite config.csv
+		server.conLock.acquire();
 		File f = new File("config.csv");
 		f.delete();
 		f.createNewFile();
@@ -264,7 +275,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 			fw.flush();
 		}
 		fw.close();
-
+		server.conLock.release();
 		return append_uuids;
 	}
 
@@ -318,8 +329,9 @@ public class ClientHandlerForMaster extends HandleAClient {
      *
      * @param folderName
      * @throws IOException
+     * @throws InterruptedException 
      */
-	protected void deleteDirectory(String folderName) throws IOException{
+	protected void deleteDirectory(String folderName) throws IOException, InterruptedException{
 		List<String>arr = new ArrayList<String>();
 		for(int i = 0; i < server.folderList.size(); i++){
 			String name = server.folderList.get(i);
@@ -334,6 +346,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 			server.folderList.remove(arr.get(i));
 			server.folderTable.remove(arr.get(i));
 		}
+		server.dirLock.acquire();
 		File f = new File("dirconfig.csv");
 		f.delete();
 		f.createNewFile();
@@ -345,7 +358,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 			fw.flush();
 		}
 		fw.close();
-
+		server.dirLock.release();
 		List<String>temp = new ArrayList<String>();
 		for(Map.Entry<String, List<Integer>> e : server.fileTable.entrySet()){
 			if(folderName.equals(e.getKey().substring(0, folderName.length()))){
@@ -363,12 +376,14 @@ public class ClientHandlerForMaster extends HandleAClient {
      *
      * @param filename
      * @throws IOException
+     * @throws InterruptedException 
      */
-	protected void delete(String filename) throws IOException{
+	protected void delete(String filename) throws IOException, InterruptedException{
 		List<Integer> uuids = server.fileTable.get(filename);
 		server.fileTable.remove(filename);
 
 		//remove chconfig log
+		server.chLock.acquire();
 		File f0 = new File("chconfig.csv");
 		f0.delete();
 		f0.createNewFile();
@@ -397,8 +412,9 @@ public class ClientHandlerForMaster extends HandleAClient {
 			fw0.flush();
 		}
 		fw0.close();
-
+		server.chLock.release();
 		//remove config log
+		server.conLock.acquire();
 		File f = new File("config.csv");
 		f.delete();
 		f.createNewFile();
@@ -413,6 +429,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 			fw.flush();
 		}
 		fw.close();
+		server.conLock.release();
 		}
 
     /**

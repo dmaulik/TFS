@@ -33,6 +33,7 @@ public class TFSMaster implements Serializable{
 	ServerSocket serverSocket;
 	ClientHandlerForMaster csHandler;
 	int numOfClients = 0;
+	Semaphore chLock, conLock, dirLock;//locks to the data files
 	
 	MyObject obj;
 	//array of clients
@@ -71,6 +72,9 @@ public class TFSMaster implements Serializable{
         chunkTable = new HashMap<Integer, Integer>();
         folderList = new ArrayList<String>();
         folderTable = new HashMap<String,Integer>();
+        chLock = new Semaphore(1);
+        conLock = new Semaphore(1);
+        dirLock = new Semaphore(1);
 
   
         for(int i = 0; i < this.numOfChunkservers; i++){
