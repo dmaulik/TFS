@@ -396,7 +396,19 @@ public class ClientHandlerForMaster extends HandleAClient {
 			//TFSChunkserver cs = server.chunkserverTable.get(chunkLoc);
 			//cs.removeChunk(uuids.get(i));
 
-			Socket cssocket = new Socket("localhost", 7501);
+			Socket cssocket;
+			if(chunkLoc == 0){
+				cssocket = new Socket("68.181.174.130", 7501);
+			}
+			else if (chunkLoc == 1){
+				cssocket = new Socket("68.181.174.156", 7502);
+			}
+			else{
+				cssocket = new Socket("68.181.174.86", 7503);
+			}
+			
+			
+			//TODO get the right chunkserver.
 			ObjectOutputStream output = new ObjectOutputStream(cssocket.getOutputStream());
 			MyObject o = new MyObject();
 			o.cmd = "removeChunk";

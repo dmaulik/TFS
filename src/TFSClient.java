@@ -36,7 +36,7 @@ public class TFSClient implements Serializable{
 	TFSClient(int portNumber, String host){
 		try{
 			InetAddress addr = InetAddress.getByName(host);
-			mysocket = new ServerSocket(portNumber, 50, addr);
+			mysocket = new ServerSocket(portNumber, 100, addr);
 		} 
 		catch(Exception ex){ 
 			ex.printStackTrace();
@@ -52,9 +52,9 @@ public class TFSClient implements Serializable{
 				else if (clients == 1)//CHUNKSERVER 1
 					serversocket = new Socket("68.181.174.130", 7501); //connection to Chunkserver 1
 				else if (clients == 2)//CHUNKSERVER 2
-					serversocket = new Socket("68.181.174.156", 7502); //connection to Chunkserver 2
+					serversocket = new Socket("68.181.174.86", 7502); //connection to Chunkserver 2
 				else if (clients == 3)//CHUNKSERVER 3
-					serversocket = new Socket("68.181.174.86", 7503); //connection to Chunkserver 3
+					serversocket = new Socket("68.181.174.156", 7503); //connection to Chunkserver 3
 				Socket socket = mysocket.accept();	//Accept connection
 				out = new ObjectOutputStream(serversocket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
