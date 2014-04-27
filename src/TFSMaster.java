@@ -137,7 +137,7 @@ public class TFSMaster implements Serializable{
         		if(client == 0)	//CLIENT1
         			clientsocket = new Socket("68.181.174.53", 7499-numOfClients);
         		else	//CLIENT2
-        			clientsocket = new Socket("68.181.174.86", 7499-numOfClients);
+        			clientsocket = new Socket("68.181.174.43", 7499-numOfClients);
         		client++;
 				numOfClients++;
 				System.out.println("Got client");
