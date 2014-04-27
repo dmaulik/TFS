@@ -50,12 +50,12 @@ public class TFSClient implements Serializable{
 				if(clients == 0)
 					serversocket = new Socket("68.181.174.42", 7500);//connection to Master
 				else if (clients == 1)//CHUNKSERVER 1
-					serversocket = new Socket("68.181.174.130", 7500+clients); //connection to Chunkserver 1
+					serversocket = new Socket("68.181.174.130", 7501); //connection to Chunkserver 1
 				else if (clients == 2)//CHUNKSERVER 2
-					serversocket = new Socket("68.181.174.156", 7500+clients); //connection to Chunkserver 2
+					serversocket = new Socket("68.181.174.156", 7502); //connection to Chunkserver 2
 				else if (clients == 3)//CHUNKSERVER 3
-					serversocket = new Socket("68.181.174.43", 7500+clients); //connection to Chunkserver 3
-	
+					serversocket = new Socket("68.181.174.43", 7503); //connection to Chunkserver 3
+				clients++;
 				Socket socket = mysocket.accept();	//Accept connection
 				out = new ObjectOutputStream(serversocket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
