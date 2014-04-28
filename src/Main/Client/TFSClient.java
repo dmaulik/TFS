@@ -53,7 +53,7 @@ public class TFSClient implements Serializable{
 				if(clients == 0)
 					serversocket = new Socket("68.181.174.42", 7500);//connection to Master
 				else if (clients == 1)//CHUNKSERVER 1
-					serversocket = new Socket("68.181.174.130", 7501); //connection to Chunkserver 1
+					serversocket = new Socket("68.181.174.86", 7501); //connection to Chunkserver 1
 				else if (clients == 2)//CHUNKSERVER 2
 					serversocket = new Socket("68.181.174.86", 7502); //connection to Chunkserver 2
 				else if (clients == 3)//CHUNKSERVER 3
