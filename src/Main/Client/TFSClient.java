@@ -179,7 +179,7 @@ public class TFSClient implements Serializable{
 					System.out.println("Enter the local file path (i.e. src\\img.png)");
 					String locfile = scan.nextLine();
 					//String locfile = "src\\img.png";
-					System.out.println("Enter the TFS File name (i.e. 1\\2\\5\\File3");
+					System.out.println("Enter the TFS File name (i.e. 1\\2\\5\\File3)");
 					String tfspath = scan.nextLine();
 					//String tfspath = "1\\2\\5\\File3";
 				  	
@@ -197,7 +197,7 @@ public class TFSClient implements Serializable{
 				  	
 				}
 				else if(command == 7){
-					System.out.println("Enter the tfs file name (i.e. 1\\2\\5\\File3");
+					System.out.println("Enter the tfs file name (i.e. 1\\2\\5\\File3)");
 					String filename = scan.nextLine();
 					//String filename = "1\\2\\5\\File3";
 					boolean done = false;
@@ -481,7 +481,7 @@ public class TFSClient implements Serializable{
 			int replicas = 3;
 			List<Integer> uuids = masterHandler.write(filename, combined);
 			int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
-			System.out.println(uuids +"in append not exist");
+
 			chunkserverHandlers.get(cs).write_chunks(uuids, combined );
 			
 			for(int i=0; i<replicas-1; i++){
@@ -493,7 +493,6 @@ public class TFSClient implements Serializable{
 		}
 		else{
 			List<Integer> uuids = masterHandler.write_append(filename, combined);
-			System.out.println(uuids +"in append exist");
 			int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
 			chunkserverHandlers.get(cs).write_chunks(uuids, combined);
 			
