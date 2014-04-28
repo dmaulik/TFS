@@ -42,7 +42,7 @@ public class TFSClient implements Serializable{
 			mysocket = new ServerSocket(portNumber, 100, addr);
 		} 
 		catch(Exception ex){ 
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			System.exit(0);
 		}
 
@@ -77,7 +77,7 @@ public class TFSClient implements Serializable{
 					//new Thread(masterHandler).start();
 				}
 				catch(Exception ex){
-					ex.printStackTrace();
+					//ex.printStackTrace();
 				}
 				
 			}
@@ -225,7 +225,7 @@ public class TFSClient implements Serializable{
 			}
 		}
 		catch(Exception ex){
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}		
 	}
 

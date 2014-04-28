@@ -109,7 +109,7 @@ public class ClientHandlerForMaster extends HandleAClient {
 				}
 			}
 			catch(Exception ex){
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}						
 		}
 	}

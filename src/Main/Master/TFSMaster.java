@@ -129,7 +129,7 @@ public class TFSMaster implements Serializable{
 			System.out.println("Server started");
 		} 
 		catch(Exception ex){ 
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			System.exit(0);
 		}
         
@@ -157,13 +157,13 @@ public class TFSMaster implements Serializable{
 					new Thread(csHandler).start();
 				}
 				catch(Exception ex){
-					ex.printStackTrace();
+					//ex.printStackTrace();
 				}						
 			}	
 		}
 
 		catch(IOException ex){
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
     }
 

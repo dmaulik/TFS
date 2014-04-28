@@ -95,7 +95,7 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 				}
 			}
 			catch(Exception ex){
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}						
 		}
 

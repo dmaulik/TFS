@@ -62,7 +62,7 @@ public class TFSChunkserver implements Serializable
 			System.out.println("Chunkserver started");
 		} 
 		catch(Exception ex){ 
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			System.exit(0);
 		}
 		
@@ -85,16 +85,16 @@ public class TFSChunkserver implements Serializable
 					new Thread(csHandler).start();
 				}
 				catch(Exception ex){
-					ex.printStackTrace();
+					//ex.printStackTrace();
 				}	
 
 			}
 			catch(Exception ex){
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}
 		}
 		}catch (Exception e ){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
