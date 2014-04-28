@@ -88,46 +88,68 @@ public class TFSClient implements Serializable{
 				command = scan.nextInt();
 				
 				if(command == 1){
-					test1(7,3);
-					//makeDirs("", 1,7);
+					System.out.println("Enter the # of folder (i.e. 7)");
+					int numOfFolder = scan.nextInt();
+					System.out.println("Enter the fanout (i.e. 3)");
+					int fanout = scan.nextInt();
+					test1(numOfFolder, fanout);
+					//test1(7,3);
 				}
 				else if(command == 2){
-					createFiles("1\\2",5);
+					System.out.println("Enter the directory path (i.e. 1\\2)");
+					String path = scan.nextLine();
+					System.out.println("Enter the # of copies (i.e. 5)");
+					int copies = scan.nextInt();
+					createFiles(path,copies);
+					//createFiles("1\\2",5);
 				}
 				else if(command == 3){
+					System.out.println("Enter the directory path (i.e. 1\\2)");
+					String path = scan.nextLine();
 					masterHandler.deleteDirectory("1\\2");
+					//masterHandler.deleteDirectory("1\\2");
 				}
 				else if(command == 4){
-					int replicas = 2;
+					System.out.println("Enter the local path (i.e. src\\test123.txt)");
+					String locPath = scan.nextLine();
+					System.out.println("Enter the TFS File (i.e. 1\\2\\5\\File5)");
+					String tfsPath = scan.nextLine();
+					System.out.println("Enter the number of replicas (i.e. 2)");
+					int replicas = scan.nextInt();
+					
 					if(replicas <= 0 || replicas>noOfChunkservers){
 						System.out.println("ERROR!!");
 						break;
 					}
-					storeLocalFile("src\\test123.txt", "1\\2\\5\\File5");
+					storeLocalFile(locPath, tfsPath);
 					for(int i=0; i<replicas-1; i++){
-						storeLocalFile("src\\test123.txt", "1\\2\\5\\File5" + "copy" + i);
+						storeLocalFile(locPath, tfsPath + "copy" + i);
 					}
 					
 					try{
-						List<Integer> uuids = masterHandler.getUUIDs("1\\2\\5\\File5");
+						List<Integer> uuids = masterHandler.getUUIDs(tfsPath);
 						int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
-						String s = new String(chunkserverHandlers.get(cs).read("1\\2\\5\\File5",uuids));
+						String s = new String(chunkserverHandlers.get(cs).read(tfsPath, uuids));
 					    System.out.println("Content : " + s);
 					}catch (Exception e){
 						
 					}
 					
 				}
-				else if(command == 5){					
-					String filename = "1\\2\\5\\File5";
-					String destination = "src\\test";
+				else if(command == 5){
+					System.out.println("Enter the tfs file name (i.e. 1\\2\\5\\File5)");
+					String filename = scan.nextLine();
+					//String filename = "1\\2\\5\\File5";
+					System.out.println("Enter the local path (i.e. src\\test)");
+					String destination = scan.nextLine();
+					//String destination = "src\\test";
 					
 					System.out.println("Reading from " + filename + " and writing to " + destination); // Writing to Local
 					
 					boolean done = true;
 					try{
 						storeTFSFile(filename, destination);
-						System.out.println("Writing Successful!");
+						//System.out.println("Writing Successful!");
 					}catch(Exception e){
 						done = false;
 						System.out.println("Failed to connect to chunkserver. Trying to get copies");
@@ -146,8 +168,12 @@ public class TFSClient implements Serializable{
 					}
 				}
 				else if(command == 6){
-					String locfile = "src\\img.png";
-					String tfspath = "1\\2\\5\\File3";
+					System.out.println("Enter the local file path (i.e. src\\img.png)");
+					String locfile = scan.nextLine();
+					//String locfile = "src\\img.png";
+					System.out.println("Enter the TFS File name (i.e. 1\\2\\5\\File3");
+					String tfspath = scan.nextLine();
+					//String tfspath = "1\\2\\5\\File3";
 				  	
 				  	append(locfile,tfspath);
 
@@ -163,7 +189,9 @@ public class TFSClient implements Serializable{
 				  	
 				}
 				else if(command == 7){
-					String filename = "1\\2\\5\\File3";
+					System.out.println("Enter the tfs file name (i.e. 1\\2\\5\\File3");
+					String filename = scan.nextLine();
+					//String filename = "1\\2\\5\\File3";
 					boolean done = false;
 					try{
 						countFile(filename);
@@ -202,6 +230,10 @@ public class TFSClient implements Serializable{
      * @throws IOException
      */
 	public void test1(int n, int fanout) throws ClassNotFoundException, IOException{
+		if(fanout <0){
+			return;
+		}
+		
 		if(fanout == 0){
 			String pD;
 			for(int i=1; i <= n; i++){
