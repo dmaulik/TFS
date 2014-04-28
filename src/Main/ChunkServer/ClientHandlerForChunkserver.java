@@ -214,6 +214,9 @@ public class ClientHandlerForChunkserver extends HandleAClient {
      * @throws IOException  Something
      */
 	public byte[] fileToByte (File file) throws IOException{
+		if(file.length() == 0){
+			return new byte[0];
+		}
 	    byte []buffer = new byte[(int) file.length()];
 	    InputStream ios = null;
 	    try {
