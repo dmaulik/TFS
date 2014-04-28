@@ -26,13 +26,13 @@ import java.awt.event.*;
  */
 public class TFSChunkserver implements Serializable
 {
-	protected String chunkLocation;
-	protected Map<Integer, byte[]> chunkTable; //chunkID to fileName
-	protected Map<Integer, locks> lockTable;
+	protected String chunkLocation;	//Chunkserver name
+	protected Map<Integer, byte[]> chunkTable; //Maps chunkID to fileName
+	protected Map<Integer, locks> lockTable;	//Maps chunkID to unique Semaphore
 	protected String root;
 	protected String local_filesystem_root;
 	
-	Socket serversocket;	//Socket to Client
+	Socket serversocket;	//Socket to talk to Client
 	ServerSocket mysocket;	//My socket
 	static ObjectOutputStream out;
 	static ObjectInputStream in;
@@ -45,13 +45,15 @@ public class TFSChunkserver implements Serializable
      * @param chunkloc
      */
 	TFSChunkserver(String chunkloc, int portNumber, String host){
+		//Initialize everything
 		this.chunkLocation = chunkloc;
 		this.chunkTable = new HashMap<Integer, byte[]>();
 		this.lockTable = new HashMap<Integer, locks>();
 		this.root = "src";
 		this.local_filesystem_root = "/tmp/gfs/chunks" + chunkLocation.toString();
-		//createFolder(this.local_filesystem_root);
+
 		try{
+			//Start chunkserver
 			InetAddress addr = InetAddress.getByName(host);
 			mysocket = new ServerSocket(portNumber, 50, addr); 
 			System.out.println("Chunkserver started");
@@ -65,11 +67,11 @@ public class TFSChunkserver implements Serializable
 		try{
 		while(true){
 			try{
-				Socket socket = mysocket.accept();
+				Socket socket = mysocket.accept();	//Accept connection
 				if(clients == 0)//CLIENT 1
 					serversocket = new Socket("68.181.174.53", 7499-clients);
 				else	//CLIENT 2
-					serversocket = new Socket("68.181.174.43", 7499-clients);
+					serversocket = new Socket("68.181.174.53", 7499-clients);
 				clients++;
 				System.out.println("Got Client");
 				out = new ObjectOutputStream(serversocket.getOutputStream());

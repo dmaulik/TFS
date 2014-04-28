@@ -25,9 +25,6 @@ public class HandleAClient implements Runnable{
 	public HandleAClient(Socket socket, TFSClient client){
 		this.client = client;
 		this.socket = socket;
-		
-		//outputToClient = client.getOutput();
-		//inputFromClient = client.getInput();
 	}
 
     /**
@@ -40,9 +37,7 @@ public class HandleAClient implements Runnable{
 		this.socket = socket; // initialize socket
 
 		outputToClient = server.getOutput();
-		inputFromClient = server.getInput();
-
-		//System.out.println("client handler spawned");		
+		inputFromClient = server.getInput();	
 	}
 
     /**
@@ -58,30 +53,9 @@ public class HandleAClient implements Runnable{
 
 		outputToClient = chunkserver.getOutput();
 		inputFromClient = chunkserver.getInput();
-
-		//System.out.println("client handler spawned");		
 	}
 
 
-	////////SENDING METHODS////////////////
-
-    /**
-     *
-     */
-	public void sendObject(){
-		try{
-			server.obj.cmd = "from server";
-			
-			MyObject o = new MyObject();
-			o.cmd = "hi";
-			outputToClient.writeObject(o);
-		
-		}
-		catch(Exception e){
-			e.printStackTrace();
-			System.exit(0);
-		}
-	}
 	
 	//getters
 
@@ -105,8 +79,7 @@ public class HandleAClient implements Runnable{
      *
      */
 	public void run() {
-
-
+		//Will be overriden
 	}
 
 

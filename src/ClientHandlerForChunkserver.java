@@ -6,7 +6,7 @@ import java.util.concurrent.Semaphore;
 
 
 /**
- *
+ * 
  */
 public class ClientHandlerForChunkserver extends HandleAClient {
 	List<request> requests;
@@ -14,9 +14,9 @@ public class ClientHandlerForChunkserver extends HandleAClient {
     /**
      *
      * @param socket                The socket it is connecting to
-     * @param chunkserver           The chunkserver
-     * @throws UnknownHostException Something something
-     * @throws IOException          Something something
+     * @param chunkserver           The Chunkserver it is on
+     * @throws UnknownHostException 
+     * @throws IOException         
      */
 	public ClientHandlerForChunkserver(Socket socket, TFSChunkserver chunkserver) throws UnknownHostException, IOException{		
 		super(socket,chunkserver);
@@ -25,70 +25,57 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 	}
 
     /**
-     *
+     * To process write/read. Works like a queue
      */
 	class request{
-		int id;
-		byte[] array;
-
-        /**
-         *
-         * @param a Something
-         * @param b Something
-         */
+		int id;	//Request ID
+		byte[] array;	//content
+		
+		//Constructor
 		public request(int a, byte[] b){
 			id = a;
 			array = b;
 		}
-
-        /**
-         *
-         * @return  An int id
-         */
+		//return the request ID
 		public int getId() {
 			return id;
 		}
-
-        /**
-         *
-         * @return  A byte array
-         */
+		//return the content
 		public byte[] getArray() {
 			return array;
 		}
 	}
 
     /**
-     *
+     *	This runs the thread
      */
 	public void run(){
 		while(true){
 			try{
+				//To store incoming msg
 				MyObject obj = new MyObject();
 				try{
 					//Keep Reading for input from client
 					obj = (MyObject) inputFromClient.readObject();
-				}
-				catch (Exception e){
-					
-				}
+				}catch (Exception e){}
 
-				//System.out.println("Request from client: "+obj.s);
+				//Write chunks to chunkserver
 				if(obj.cmd.equals("write")){
-					//Writing the chunks to chunkserver
 					this.write((int)obj.params.get(0), (byte[]) obj.params.get(1));
 				}
+				//Read chunks and return it
 				else if (obj.cmd.equals("read")){
-					
-					//Reading the chunks
+					//get the chunk ID
 					int chunkID = (int) obj.params.get(0);
+					//Create new semaphore corresponding to the chunk ID
 					if(chunkserver.lockTable.get(chunkID)==null){
 						locks temp = new locks();
 						chunkserver.lockTable.put(chunkID, temp);
 					}
+					//Acquire the lock
 					chunkserver.lockTable.get(chunkID).write.acquire();
+					//Do the read
 					byte[] by = this.read(chunkID);
-					
 					//Reply to client
 					obj.params.clear();
 					obj.params.add(by);
@@ -97,20 +84,11 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 					chunkserver.lockTable.get(chunkID).write.release();
 					
 				}
+				//Remove chunks from chunkserver
 				else if (obj.cmd.equals("removeChunk")){
-					//Remove chunks from chunkserver
 					this.removeChunk((int)obj.params.get(0));
 					obj.params.clear();
 				}
-				/*else if (obj.cmd.equals("versionInquery")){
-					int version = chunkserver.versionNumber;
-					//Reply to client
-					obj.params.clear();
-					obj.params.add(version);
-					outputToClient.writeObject(obj);
-					outputToClient.flush();
-				}*/
-				
 			}
 			catch(Exception ex){
 				ex.printStackTrace();
@@ -139,7 +117,7 @@ public class ClientHandlerForChunkserver extends HandleAClient {
     }
 
     /**
-     *
+     * Create a local file
      * @param chunkuuid The uuid of the chunk
      */
 	public void createFile (int chunkuuid){
@@ -149,7 +127,7 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 	}
 
     /**
-     *
+     * Write data to a specific chunk
      * @param chunkuuid     The uuid of the chunk
      * @param chunk         The chunk
      * @throws IOException  Something
@@ -157,48 +135,51 @@ public class ClientHandlerForChunkserver extends HandleAClient {
      */
 	public void write (int chunkuuid, byte[] chunk) throws IOException, InterruptedException
 	{
+		//Add to request lists
 		requests.add(new request(chunkuuid,chunk));
+		//Finish all requests to write
 		while(requests.size()!=0){
 			int id = requests.get(0).id;
 			byte[] b = requests.get(0).getArray();
 			if(chunkserver.lockTable.get(id)==null){
 				chunkserver.lockTable.put(id, new locks());
-				System.out.println("lock "+ id+" created");
+				System.out.println("Lock "+ id+" created");
 			}
 			chunkserver.lockTable.get(id).write.acquire();
-			System.out.println("lock "+id+ " acquired");
+			System.out.println("Lock "+id+ " acquired");
 			String local_filename = getFileName(id);
 			System.out.println(local_filename);
+		
+			//Write data to the chunk
 			File file = new File(local_filename);
-		
 			FileOutputStream fos = new FileOutputStream(file);
-		
 			fos.write(b);
 		
+			//update chunkTable
 			chunkserver.chunkTable.put(id, local_filename.getBytes());
 			fos.flush();
 			fos.close();
 			chunkserver.versionNumber++;
 		
+			//Release semaphore
 			chunkserver.lockTable.get(id).write.release();
-			System.out.println("lock "+id+ " released");
+			System.out.println("Lock "+id+ " released");
 			requests.remove(0);
 		}
 	}
 
 	
     /**
-     *
+     * Read a chunk and return it
      * @param chunkID       Id of the chunk
      * @return              A byte array
      * @throws IOException  Something
      */
 	public byte[] read (int chunkID) throws IOException
 	{
-		//System.out.println(chunkID);
-		byte[] data = null;
+		byte[] data = null;	//To store the data
+		//Read the data
 		String localFilename = getFileName(chunkID);
-		//System.out.println(localFilename);
 		data = fileToByte(new File(localFilename));
 		return data;
 	}
@@ -214,7 +195,7 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 	}
 
     /**
-     *
+     * Remove chunk from local chunkserver
      * @param chunkID   Id of the chunk
      */
 	public void removeChunk(int chunkID){
@@ -223,13 +204,12 @@ public class ClientHandlerForChunkserver extends HandleAClient {
 	}
 
     /**
-     *
+     * Get the content of the file in byte[] and then return it
      * @param file          A file
      * @return              A byte array from the file
      * @throws IOException  Something
      */
 	public byte[] fileToByte (File file) throws IOException{
-
 	    byte []buffer = new byte[(int) file.length()];
 	    InputStream ios = null;
 	    try {
@@ -253,8 +233,8 @@ public class ClientHandlerForChunkserver extends HandleAClient {
      * @return
      */
 	 public ObjectOutputStream getOutput(){
-			return outputToClient;
-		}
+		return outputToClient;
+	}
 
     /**
      *

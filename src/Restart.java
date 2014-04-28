@@ -9,7 +9,7 @@ import java.io.*;
 public class Restart{
 
     /**
-     *
+     * Clear the config files
      * @param args
      * @throws IOException
      */
