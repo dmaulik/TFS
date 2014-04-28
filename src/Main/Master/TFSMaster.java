@@ -54,7 +54,7 @@ public class TFSMaster implements Serializable{
 	public Map<String, List<Integer>> fileTable; // Map filename to chunk ids
 	public Map<Integer, Integer> chunkTable; // Map chunk id to chunkloc id
 	public Map<String, Integer> folderTable; // Map foldername to chunkloc id
-	public List<String> folderList;
+	public List<String> folderList;	//List of existing folders
     
     
     /**
@@ -71,6 +71,7 @@ public class TFSMaster implements Serializable{
      * @throws IOException
      */
     public TFSMaster() throws IOException {
+    	//Initialize
     	obj = new MyObject();
         fileTable = new HashMap<String, List<Integer>>();
         chunkserverTable = new HashMap<Integer, Integer>();
@@ -81,14 +82,13 @@ public class TFSMaster implements Serializable{
         conLock = new Semaphore(1);
         dirLock = new Semaphore(1);
 
-  
+        //Initialize chunkserverTable
         for(int i = 0; i < this.numOfChunkservers; i++){
-            //TFSChunkserver cs = new TFSChunkserver(""+i);
             chunkserverTable.put (i, 7501+i);
         }
         
         
-        //Populate files
+        //Populate file data
         String line = "";
         BufferedReader br = new BufferedReader(new FileReader("config.csv"));
         line = br.readLine();
@@ -102,7 +102,7 @@ public class TFSMaster implements Serializable{
         }
         br.close();
         
-        //Populate folders
+        //Populate folder data
         line = "";
         br = new BufferedReader(new FileReader("dirconfig.csv"));
         while((line = br.readLine()) != null){
@@ -112,7 +112,7 @@ public class TFSMaster implements Serializable{
         }
         br.close();
         
-        //Populate chunkID -> chunkLoc mapping
+        //Populate chunkID->chunkLoc mapping
         line = "";
         br = new BufferedReader(new FileReader("chconfig.csv"));
         while((line = br.readLine()) != null){
@@ -141,7 +141,7 @@ public class TFSMaster implements Serializable{
         		Socket clientsocket;
         		if(client == 0)	//CLIENT1
         			clientsocket = new Socket("68.181.174.53", 7499-numOfClients);
-        		else	//CLIENT2
+        		else //CLIENT2
         			clientsocket = new Socket("68.181.174.53", 7499-numOfClients);
         		client++;
 				numOfClients++;

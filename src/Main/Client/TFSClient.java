@@ -89,12 +89,15 @@ public class TFSClient implements Serializable{
 				
 				System.out.print("Enter Test Number:");
 				command = scan.nextInt();
+				scan.nextLine();
 				
 				if(command == 1){
 					System.out.println("Enter the # of folder (i.e. 7)");
 					int numOfFolder = scan.nextInt();
+					scan.nextLine();
 					System.out.println("Enter the fanout (i.e. 3)");
 					int fanout = scan.nextInt();
+					scan.nextLine();
 					test1(numOfFolder, fanout);
 					//test1(7,3);
 				}
@@ -103,6 +106,7 @@ public class TFSClient implements Serializable{
 					String path = scan.nextLine();
 					System.out.println("Enter the # of copies (i.e. 5)");
 					int copies = scan.nextInt();
+					scan.nextLine();
 					createFiles(path,copies);
 					//createFiles("1\\2",5);
 				}
@@ -119,6 +123,7 @@ public class TFSClient implements Serializable{
 					String tfsPath = scan.nextLine();
 					System.out.println("Enter the number of replicas (i.e. 2)");
 					int replicas = scan.nextInt();
+					scan.nextLine();
 					
 					if(replicas <= 0 || replicas>noOfChunkservers){
 						System.out.println("ERROR!!");
