@@ -292,8 +292,9 @@ public class HandlerForClient extends HandleAClient {
 	public List<Integer> getUUIDs(String filename) throws IOException, ClassNotFoundException{
 		if(!fileExists(filename)){
 			System.out.println("Exception!");
-			System.out.println("Terminating..");
-			System.exit(0);;
+			//System.out.println("Terminating..");
+			//System.exit(0);
+			return null;
 		}
 
 		//Request chunk IDs to master

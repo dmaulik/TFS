@@ -108,10 +108,15 @@ public class TFSClient implements Serializable{
 						storeLocalFile("src\\test123.txt", "1\\2\\5\\File5" + "copy" + i);
 					}
 					
-					List<Integer> uuids = masterHandler.getUUIDs("1\\2\\5\\File5");
-					int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
-					String s = new String(chunkserverHandlers.get(cs).read("1\\2\\5\\File5",uuids));
-				    System.out.println("Content : " + s);
+					try{
+						List<Integer> uuids = masterHandler.getUUIDs("1\\2\\5\\File5");
+						int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
+						String s = new String(chunkserverHandlers.get(cs).read("1\\2\\5\\File5",uuids));
+					    System.out.println("Content : " + s);
+					}catch (Exception e){
+						
+					}
+					
 				}
 				else if(command == 5){					
 					String filename = "1\\2\\5\\File5";
@@ -146,11 +151,16 @@ public class TFSClient implements Serializable{
 				  	
 				  	append(locfile,tfspath);
 
-				  	List<Integer> uuids = masterHandler.getUUIDs(tfspath);
-				  	System.out.println("uuids "+uuids);
-				  	int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
-					String s = new String(chunkserverHandlers.get(cs).read(tfspath,uuids));
-				    System.out.println("Content : " + s);
+				  	try{
+				  		List<Integer> uuids = masterHandler.getUUIDs(tfspath);
+					  	System.out.println("uuids "+uuids);
+					  	int cs = masterHandler.getChunkserverToTalk(uuids.get(0));
+						String s = new String(chunkserverHandlers.get(cs).read(tfspath,uuids));
+					    System.out.println("Content : " + s);
+				  	}catch (Exception e){
+				  		
+				  	}
+				  	
 				}
 				else if(command == 7){
 					String filename = "1\\2\\5\\File3";
@@ -174,9 +184,7 @@ public class TFSClient implements Serializable{
 					}	
 					
 				}
-				else if(command == 8){
-					//Do it later
-				}
+
 				System.out.println("\nDone\n");
 			}
 		}
